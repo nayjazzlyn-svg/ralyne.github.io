@@ -9,1826 +9,682 @@
         href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Space+Grotesk:wght@400;500;600;700&display=swap"
         rel="stylesheet">
     <link rel="icon" href="Ralyne/2.jpg" type="image/jpeg">
+    <link rel="stylesheet" href="style.css">
 </head>
-<style>
-/* ========== RESET & VARIABLES ========== */
-*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
-:root{
-    --bg:#050505;--bg-card:#0a0a08;
-    --border:rgba(212,175,55,.12);--border-hover:rgba(212,175,55,.35);
-    --text:#f5f0e1;--text-dim:rgba(245,240,225,.5);
-    --gold:#d4af37;--gold-light:#f5e6a3;--gold-glow:rgba(212,175,55,.25);--gold-dark:#b8960c;
-    --lemon:#fce047;--peach:#e6c88a;
-    --orange:#f97316;--orange-light:#fb923c;--orange-glow:rgba(249,115,22,.25);
-    --purple:#c084fc;--purple-light:#d8b4fe;--purple-glow:rgba(192,132,252,.25);
-    --r:16px;--r-sm:12px;
-    --shadow:0 4px 20px rgba(212,175,55,.08);--shadow-hover:0 8px 30px rgba(212,175,55,.18);
-}
-html{scroll-behavior:smooth}
-body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);-webkit-font-smoothing:antialiased;overflow-x:hidden;overflow-wrap:break-word;word-break:break-word}
-::-webkit-scrollbar{width:6px}
-::-webkit-scrollbar-track{background:#000}
-::-webkit-scrollbar-thumb{background:var(--gold-dark);border-radius:3px}
-
-/* ========== INTRO OVERLAY ========== */
-.intro-overlay{position:fixed;inset:0;z-index:10000;background:#050505;display:flex;align-items:center;justify-content:center;transition:opacity .8s ease,transform .8s ease}
-.intro-overlay.hide{opacity:0;transform:scale(1.1);pointer-events:none}
-.intro-card{width:140px;aspect-ratio:3/4;background:linear-gradient(135deg,rgba(212,175,55,.15),rgba(184,150,12,.05));border:2px solid var(--gold);border-radius:16px;display:flex;align-items:center;justify-content:center;box-shadow:0 0 60px rgba(212,175,55,.3);animation:introFlip 1.6s ease-in-out forwards;overflow:hidden}
-.intro-card span{font-size:4rem}
-@keyframes introFlip{0%{transform:rotateY(90deg) scale(.8);opacity:0}30%{transform:rotateY(0) scale(1);opacity:1}70%{transform:rotateY(0) scale(1);opacity:1}100%{transform:rotateY(-90deg) scale(.8);opacity:0}}
-
-/* ========== VIEWS ========== */
-.view-container{position:relative;min-height:100vh}
-.view{display:none;opacity:0;transform:translateY(15px);transition:opacity .5s ease,transform .5s ease}
-.view.active{display:block;animation:fadeInView .5s ease forwards}
-@keyframes fadeInView{from{opacity:0;transform:translateY(15px)}to{opacity:1;transform:translateY(0)}}
-
-/* ========== NAV ========== */
-.nav{position:fixed;top:0;left:0;right:0;z-index:900;height:58px;display:flex;align-items:center;justify-content:space-between;padding:0 max(24px,env(safe-area-inset-right));background:transparent;border-bottom:1px solid transparent;transition:background .4s,border-color .4s,box-shadow .4s}
-.nav.scrolled{background:rgba(5,5,5,.9);border-bottom:1px solid rgba(212,175,55,.15);box-shadow:0 2px 24px rgba(0,0,0,.6);backdrop-filter:blur(16px)}
-.nav.nav-dark .nav-brand-text .lib{color:rgba(255,255,255,.3)}
-.nav.nav-dark .nav-brand-text .raly{color:var(--gold-light)}
-.nav.nav-dark .nav-brand-icon{background:linear-gradient(135deg,var(--gold),var(--gold-dark))}
-.nav.nav-dark .nav-link{color:rgba(255,255,255,.4)}
-.nav.nav-dark .nav-link:hover{color:var(--gold-light);background:rgba(212,175,55,.06)}
-.nav.nav-dark .nav-link.active{color:var(--gold-light);font-weight:600}
-.nav.nav-dark .burger span{background:var(--gold-light)}
-.nav.nav-dark .mob-menu{background:rgba(10,10,8,.97);border-left:1px solid rgba(212,175,55,.1)}
-.nav.nav-dark .mob-menu-link{color:rgba(255,255,255,.4)}
-.nav.nav-dark .mob-menu-link:hover{color:var(--gold-light);background:rgba(212,175,55,.06)}
-.nav.nav-dark .mob-menu-footer{color:rgba(255,255,255,.2);border-top-color:rgba(212,175,55,.1)}
-.nav.nav-dark .mob-overlay{background:rgba(0,0,0,.6)}
-.nav.nav-dark .burger{background:rgba(212,175,55,.08);border-color:rgba(212,175,55,.12)}
-.nav-brand{display:flex;align-items:center;gap:10px;text-decoration:none;user-select:none;cursor:pointer}
-.nav-brand-icon{width:32px;height:32px;border-radius:8px;background:linear-gradient(135deg,var(--gold),var(--gold-dark));display:flex;align-items:center;justify-content:center;overflow:hidden;flex-shrink:0}
-.nav-brand-icon img{width:100%;height:100%;object-fit:cover;border-radius:8px}
-.nav-brand-text{font-family:'Space Grotesk',sans-serif;font-size:1.2rem;font-weight:700;letter-spacing:-.02em}
-.nav-brand-text .lib{color:var(--text-dim);font-weight:400}
-.nav-brand-text .raly{color:var(--gold-light)}
-.nav-links{display:flex;align-items:center;gap:4px}
-.nav-link{padding:8px 14px;color:var(--text-dim);text-decoration:none;font-size:.82rem;font-weight:500;border-radius:8px;transition:all .25s;white-space:nowrap;cursor:pointer}
-.nav-link:hover{color:var(--gold-light);background:rgba(212,175,55,.06)}
-.nav-link.active{color:var(--gold-light);font-weight:600}
-.nav-dropdown{position:relative}
-.nav-dropdown-trigger{display:flex;align-items:center;gap:5px;padding:8px 14px;color:rgba(255,255,255,.4);text-decoration:none;font-size:.82rem;font-weight:500;border-radius:8px;transition:all .25s;white-space:nowrap;cursor:pointer;background:none;border:none;font-family:'Inter',sans-serif}
-.nav-dropdown-trigger:hover{color:var(--gold-light);background:rgba(212,175,55,.06)}
-.nav-dropdown-trigger.active{color:var(--gold-light);font-weight:600}
-.nav-dropdown-arrow{display:inline-block;width:0;height:0;border-left:4px solid transparent;border-right:4px solid transparent;border-top:5px solid currentColor;transition:transform .25s ease;margin-top:1px}
-.nav-dropdown.open .nav-dropdown-arrow{transform:rotate(180deg)}
-.nav-dropdown-menu{position:absolute;top:calc(100% + 8px);right:0;min-width:190px;background:rgba(10,10,8,.97);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border:1px solid rgba(212,175,55,.18);border-radius:12px;padding:6px;box-shadow:0 12px 40px rgba(0,0,0,.7),0 0 20px rgba(212,175,55,.06);opacity:0;pointer-events:none;transition:opacity .25s ease,transform .25s ease;z-index:1000;transform:translateY(6px)}
-.nav-dropdown.open .nav-dropdown-menu{opacity:1;pointer-events:auto;transform:translateY(0)}
-#galleryDropdown .nav-dropdown-menu{right:auto;left:0}
-.nav-dropdown-item{display:flex;align-items:center;gap:10px;padding:10px 14px;color:rgba(255,255,255,.5);font-size:.82rem;font-weight:500;border-radius:8px;cursor:pointer;transition:all .2s;text-decoration:none;white-space:nowrap}
-.nav-dropdown-item:hover{color:var(--gold-light);background:rgba(212,175,55,.08)}
-.nav-dropdown-item.active{color:var(--gold-light);font-weight:600;background:rgba(212,175,55,.06)}
-.nav-dropdown-item-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0}
-.nav-dropdown-item-label{flex:1}
-.nav-dropdown-item-badge{font-size:.55rem;font-weight:700;letter-spacing:.5px;text-transform:uppercase;padding:2px 8px;border-radius:20px;border:1px solid}
-.badge-gold{background:rgba(212,175,55,.08);color:var(--gold);border-color:rgba(212,175,55,.15)}
-.badge-purple{background:rgba(192,132,252,.08);color:var(--purple);border-color:rgba(192,132,252,.15)}
-.nav-dropdown-divider{height:1px;background:rgba(212,175,55,.08);margin:4px 8px}
-
-/* ========== BURGER / MOBILE ========== */
-.burger{display:none;align-items:center;justify-content:center;width:38px;height:38px;border-radius:8px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);cursor:pointer;flex-shrink:0;-webkit-tap-highlight-color:transparent;position:relative}
-.burger span{display:block;width:18px;height:2px;background:var(--text);border-radius:2px;transition:all .3s;position:absolute}
-.burger span:nth-child(1){transform:translateY(-6px)}
-.burger span:nth-child(3){transform:translateY(6px)}
-.burger.open span:nth-child(1){transform:rotate(45deg)}
-.burger.open span:nth-child(2){opacity:0}
-.burger.open span:nth-child(3){transform:rotate(-45deg)}
-.mob-overlay{position:fixed;inset:0;z-index:950;background:rgba(0,0,0,.5);backdrop-filter:blur(4px);opacity:0;pointer-events:none;transition:opacity .3s}
-.mob-overlay.open{opacity:1;pointer-events:auto}
-.mob-menu{position:fixed;top:0;right:0;bottom:0;z-index:960;width:280px;max-width:80vw;background:rgba(10,10,8,.98);backdrop-filter:blur(24px);border-left:1px solid rgba(212,175,55,.12);transform:translateX(100%);transition:transform .35s cubic-bezier(.4,0,.2,1);display:flex;flex-direction:column;overflow-y:auto;padding-right:env(safe-area-inset-right)}
-.mob-menu.open{transform:translateX(0)}
-.mob-menu-header{padding:20px;border-bottom:1px solid rgba(212,175,55,.12);display:flex;align-items:center;gap:10px}
-.mob-menu-brand-icon{width:28px;height:28px;border-radius:6px;overflow:hidden;flex-shrink:0;background:linear-gradient(135deg,var(--gold),var(--gold-dark))}
-.mob-menu-brand-icon img{width:100%;height:100%;object-fit:cover;border-radius:6px}
-.mob-menu-brand{font-family:'Space Grotesk',sans-serif;font-size:1.1rem;font-weight:700}
-.mob-menu-brand .lib{color:var(--text-dim);font-weight:400}
-.mob-menu-brand .raly{color:var(--gold-light)}
-.mob-dropdown{overflow:hidden}
-.mob-dropdown-trigger{display:flex;align-items:center;justify-content:space-between;width:100%;padding:14px 20px;color:var(--text-dim);text-decoration:none;font-size:.9rem;font-weight:500;cursor:pointer;transition:all .25s;background:none;border:none;font-family:'Inter',sans-serif;text-align:left}
-.mob-dropdown-trigger:hover{color:var(--gold-light);background:rgba(212,175,55,.06)}
-.mob-dropdown-trigger-left{display:flex;align-items:center;gap:12px}
-.mob-dropdown-arrow{display:inline-block;width:0;height:0;border-left:4px solid transparent;border-right:4px solid transparent;border-top:5px solid currentColor;transition:transform .25s ease}
-.mob-dropdown.open .mob-dropdown-arrow{transform:rotate(180deg)}
-.mob-dropdown-items{max-height:0;overflow:hidden;transition:max-height .35s ease}
-.mob-dropdown.open .mob-dropdown-items{max-height:200px}
-.mob-dropdown-item{display:flex;align-items:center;gap:12px;padding:12px 20px 12px 48px;color:var(--text-dim);font-size:.85rem;font-weight:500;cursor:pointer;transition:all .25s}
-.mob-dropdown-item:hover{color:var(--gold-light);background:rgba(212,175,55,.06)}
-.mob-dropdown-item.active{color:var(--gold-light);font-weight:600}
-.mob-menu-link{display:flex;align-items:center;gap:12px;padding:14px 20px;color:var(--text-dim);text-decoration:none;font-size:.9rem;font-weight:500;cursor:pointer;transition:all .25s}
-.mob-menu-link:hover{color:var(--gold-light);background:rgba(212,175,55,.06)}
-.mob-menu-link .dot{width:6px;height:6px;border-radius:50%;background:var(--gold);opacity:.6;flex-shrink:0}
-.mob-menu-footer{margin-top:auto;padding:16px 20px;border-top:1px solid rgba(212,175,55,.1);font-size:.7rem;color:var(--text-dim);text-align:center;letter-spacing:.5px}
-
-/* ========== HERO CINEMA ========== */
-.hero-cinema{position:relative;height:100svh;min-height:100vh;display:flex;align-items:center;justify-content:flex-start;overflow:hidden;background:#050505}
-.hero-slideshow{position:absolute;inset:0;z-index:0}
-.hero-slide{position:absolute;inset:0;background-size:cover;background-position:center 20%;opacity:0;transition:opacity 2s ease-in-out}
-.hero-slide.active-slide{opacity:1}
-.hero-overlay{position:absolute;inset:0;z-index:1;background:rgba(5,5,5,.82)}
-.hero-cinema-content{position:relative;z-index:2;width:100%;max-width:640px;padding:100px 32px 40px;margin-left:5%;text-align:left;overflow:hidden}
-.hero-cinema-label{display:inline-flex;align-items:center;gap:8px;padding:6px 16px;border-radius:20px;background:rgba(212,175,55,.06);border:1px solid rgba(212,175,55,.18);font-size:.65rem;font-weight:700;letter-spacing:2.5px;text-transform:uppercase;color:var(--gold-light);margin-bottom:28px}
-.hero-cinema-label-dot{width:5px;height:5px;border-radius:50%;background:var(--gold);animation:dotBlink 2s ease-in-out infinite}
-@keyframes dotBlink{0%,100%{opacity:.4}50%{opacity:1}}
-.hero-cinema-name{font-family:'Space Grotesk',sans-serif;font-size:clamp(3rem,9vw,5.5rem);font-weight:700;letter-spacing:-.04em;line-height:.95;margin-bottom:6px;color:#fff}
-.hero-cinema-sub{font-family:'Space Grotesk',sans-serif;font-size:clamp(1.1rem,3vw,1.6rem);font-weight:300;letter-spacing:-.01em;color:rgba(255,255,255,.2);margin-bottom:32px}
-.hero-cinema-line{width:48px;height:2px;border-radius:1px;background:linear-gradient(90deg,var(--gold),transparent);margin-bottom:28px}
-.jiko-box{min-height:60px;margin-bottom:32px}
-.jiko-text-wrap{font-size:1rem;line-height:1.8;color:rgba(255,255,255,.5);font-weight:300;font-style:italic}
-.jiko-cursor{display:inline-block;width:2px;height:1.1em;background:var(--gold);vertical-align:text-bottom;margin-left:1px;animation:cursorBlink 1s step-end infinite}
-@keyframes cursorBlink{0%,100%{opacity:1}50%{opacity:0}}
-.hero-cinema-stats{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:28px}
-.hcs-pill{display:flex;align-items:center;gap:8px;padding:8px 16px;border-radius:50px;background:rgba(212,175,55,.04);border:1px solid rgba(212,175,55,.1);font-size:.78rem;color:rgba(255,255,255,.5);transition:all .3s}
-.hcs-pill:hover{background:rgba(212,175,55,.1);border-color:rgba(212,175,55,.2)}
-.hcs-icon{font-size:12px}
-.hcs-val{font-weight:700;color:#fff}
-.hcs-label{font-size:.7rem;opacity:.5}
-.hero-cinema-actions{display:flex;flex-wrap:wrap;gap:12px}
-.hero-peek{margin-top:36px;padding-top:20px;border-top:1px solid rgba(212,175,55,.08);display:flex;align-items:center;gap:12px;flex-wrap:wrap}
-.hero-peek-label{font-size:.6rem;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--gold);opacity:.5}
-.hero-peek-info{font-size:.8rem;color:rgba(255,255,255,.4)}
-.hero-peek-info b{color:rgba(255,255,255,.7);font-weight:600}
-.hero-peek-arrow{margin-left:auto;color:var(--gold);cursor:pointer;font-size:.85rem;opacity:.4;transition:all .3s}
-.hero-peek-arrow:hover{opacity:1;transform:translateX(4px)}
-.slide-dots{position:absolute;bottom:28px;right:28px;z-index:3;display:flex;gap:6px}
-.slide-dot{width:6px;height:6px;border-radius:50%;background:rgba(255,255,255,.15);transition:all .4s}
-.slide-dot.active-dot{background:var(--gold);width:20px;border-radius:3px}
-
-/* ========== BUTTONS ========== */
-.btn{display:inline-flex;align-items:center;gap:8px;padding:12px 28px;border-radius:50px;font-family:'Inter',sans-serif;font-size:.88rem;font-weight:600;cursor:pointer;border:none;transition:all .3s;text-decoration:none}
-.btn-mint{background:linear-gradient(135deg,var(--gold),var(--gold-dark));color:#050505;box-shadow:0 6px 24px var(--gold-glow)}
-.btn-mint:hover{transform:translateY(-2px);box-shadow:0 10px 36px rgba(212,175,55,.4)}
-.btn-glass{background:rgba(212,175,55,.06);color:rgba(255,255,255,.8);border:1px solid rgba(212,175,55,.12)}
-.btn-glass:hover{background:rgba(212,175,55,.12);border-color:rgba(212,175,55,.25);transform:translateY(-2px)}
-.btn-ghost{background:var(--bg-card);color:var(--text);border:1px solid var(--border);box-shadow:var(--shadow)}
-.btn-ghost:hover{border-color:var(--border-hover);background:rgba(212,175,55,.05)}
-
-/* ========== SECTION COMMON ========== */
-.sec-pad{padding:48px 24px 32px;max-width:880px;margin:0 auto}
-.chapter{text-align:center;padding:100px 24px 0}
-.chapter-label{font-size:.65rem;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:var(--gold-light);display:flex;align-items:center;justify-content:center;gap:12px;opacity:.7}
-.chapter-label::before,.chapter-label::after{content:'';width:40px;height:1px;background:linear-gradient(90deg,transparent,rgba(212,175,55,.4),transparent)}
-.chapter-label.label-orange{color:var(--orange-light)}
-.chapter-label.label-purple{color:var(--purple-light)}
-.chapter-title{font-family:'Space Grotesk',sans-serif;font-size:clamp(1.8rem,5vw,2.6rem);font-weight:700;letter-spacing:-.02em;margin-top:10px;color:#fff}
-.chapter-title.grad{background:linear-gradient(135deg,var(--gold-light),var(--gold));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
-.chapter-title.grad-orange{background:linear-gradient(135deg,var(--orange-light),var(--orange));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
-.chapter-title.grad-purple{background:linear-gradient(135deg,var(--purple-light),var(--purple));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
-.chapter-desc{font-size:.88rem;color:var(--text-dim);margin-top:6px;max-width:440px;margin-inline:auto}
-.shelf{max-width:600px;margin:16px auto 0;height:2px;background:linear-gradient(90deg,transparent,rgba(212,175,55,.2),rgba(184,150,12,.25),rgba(212,175,55,.2),transparent)}
-.shelf-orange{background:linear-gradient(90deg,transparent,rgba(249,115,22,.2),rgba(249,115,22,.25),rgba(249,115,22,.2),transparent)}
-.shelf-purple{background:linear-gradient(90deg,transparent,rgba(192,132,252,.2),rgba(192,132,252,.25),rgba(192,132,252,.2),transparent)}
-.sec-header{margin-bottom:20px}
-.sec-title{font-family:'Space Grotesk',sans-serif;font-size:1.15rem;font-weight:700;margin-bottom:4px;color:var(--gold-light);display:flex;align-items:center;gap:8px}
-.sec-sub{font-size:.78rem;color:var(--text-dim)}
-.sec-title-purple{color:var(--purple-light)}
-.sec-divider{height:1px;background:linear-gradient(90deg,rgba(212,175,55,.2),rgba(212,175,55,.06),transparent);margin:40px 0 28px}
-.sec-divider-purple{background:linear-gradient(90deg,rgba(192,132,252,.2),rgba(192,132,252,.06),transparent)}
-
-/* ========== POKEMON CARD ========== */
-.pokecard-scene{perspective:1200px;display:flex;justify-content:center;align-items:center;min-height:100px}
-.pokecard{position:relative;width:min(340px,85vw);aspect-ratio:2.5/3.5;border-radius:18px;cursor:pointer;transform-style:preserve-3d;transition:transform .15s ease-out}
-.pokecard-border{position:absolute;inset:0;border-radius:18px;background:linear-gradient(145deg,#d4af37,#f5e6a3,#b8960c,#8b6914,#d4af37,#f5e6a3,#d4af37);background-size:300% 300%;animation:borderShimmer 6s ease-in-out infinite;padding:3px}
-@keyframes borderShimmer{0%,100%{background-position:0% 50%}50%{background-position:100% 50%}}
-.pokecard-inner{position:relative;width:100%;height:100%;border-radius:16px;background:linear-gradient(170deg,#12100d 0%,#080808 40%,#0e0c0a 100%);overflow:hidden;display:flex;flex-direction:column}
-.pokecard-holo{position:absolute;inset:0;z-index:10;pointer-events:none;opacity:0;transition:opacity .4s;background:linear-gradient(var(--holo-angle,135deg),rgba(212,175,55,.15) 0%,rgba(184,150,12,0) 20%,rgba(245,230,163,.12) 40%,rgba(184,150,12,0) 60%,rgba(212,175,55,.10) 80%,rgba(184,150,12,0) 100%);mix-blend-mode:screen}
-.pokecard:hover .pokecard-holo{opacity:1}
-.pokecard-sparkle{position:absolute;inset:0;z-index:11;pointer-events:none;opacity:0;transition:opacity .5s;background-image:radial-gradient(1px 1px at 20% 30%,rgba(245,230,163,.9),transparent),radial-gradient(1px 1px at 60% 20%,rgba(245,230,163,.7),transparent),radial-gradient(1px 1px at 80% 60%,rgba(212,175,55,.8),transparent),radial-gradient(1.5px 1.5px at 50% 50%,#fff,transparent)}
-.pokecard:hover .pokecard-sparkle{opacity:1}
-.pokecard-header{display:flex;align-items:center;justify-content:space-between;padding:14px 18px 8px;position:relative;z-index:5}
-.pokecard-name{font-family:'Space Grotesk',sans-serif;font-size:1.15rem;font-weight:700;color:#fff}
-.pokecard-hp{display:flex;align-items:center;gap:4px;font-family:'Space Grotesk',sans-serif;font-size:.85rem;font-weight:600;color:#fff}
-.pokecard-hp-val{font-size:1.3rem;font-weight:800;line-height:1}
-.pokecard-hp-label{font-size:.6rem;font-weight:700;letter-spacing:.5px;opacity:.7}
-.pokecard-art-wrap{margin:0 16px;border-radius:12px;overflow:hidden;position:relative;z-index:5;background:linear-gradient(135deg,#1a1812,#0e0d0a);border:2px solid rgba(212,175,55,.3);aspect-ratio:4/3;box-shadow:inset 0 2px 8px rgba(0,0,0,.6),0 2px 12px rgba(0,0,0,.4);cursor:pointer}
-.pokecard-art-wrap img{width:100%;height:100%;object-fit:cover;object-position:50% 15%;display:block;transition:transform .6s ease}
-.pokecard:hover .pokecard-art-wrap img{transform:scale(1.04)}
-.pokecard-stage{position:absolute;top:8px;left:8px;z-index:6;display:flex;align-items:center;gap:4px;padding:4px 10px;border-radius:20px;background:rgba(0,0,0,.7);backdrop-filter:blur(8px);border:1px solid rgba(212,175,55,.25);font-size:.55rem;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--gold-light)}
-.pokecard-stage-dot{width:4px;height:4px;border-radius:50%;background:var(--gold)}
-.pokecard-type-badge{position:absolute;top:8px;right:8px;z-index:6;width:32px;height:32px;border-radius:50%;background:rgba(0,0,0,.7);backdrop-filter:blur(8px);border:1px solid rgba(212,175,55,.25);display:flex;align-items:center;justify-content:center;font-size:16px}
-.pokecard-body{padding:12px 18px 6px;position:relative;z-index:5}
-.pokecard-attack{display:flex;align-items:center;gap:8px;margin-bottom:8px}
-.pokecard-attack-icons{display:flex;gap:2px;font-size:11px}
-.pokecard-attack-name{font-size:.82rem;font-weight:700;color:#fff}
-.pokecard-attack-dmg{margin-left:auto;font-family:'Space Grotesk',sans-serif;font-size:1.1rem;font-weight:800;color:#fff}
-.pokecard-attack-desc{font-size:.6rem;color:rgba(255,255,255,.45);line-height:1.4;margin-bottom:10px}
-.pokecard-divider{height:1px;background:linear-gradient(90deg,transparent,rgba(212,175,55,.35),transparent);margin:4px 0 10px}
-.pokecard-stats{display:grid;grid-template-columns:1fr 1fr;gap:6px 16px;padding:0 18px;position:relative;z-index:5}
-.pokecard-stat{display:flex;align-items:center;gap:6px}
-.pokecard-stat-label{font-size:.55rem;font-weight:700;letter-spacing:.5px;text-transform:uppercase;color:rgba(255,255,255,.4);min-width:30px}
-.pokecard-stat-bar-wrap{flex:1;height:4px;border-radius:2px;background:rgba(255,255,255,.1);overflow:hidden}
-.pokecard-stat-bar{height:100%;border-radius:2px;background:linear-gradient(90deg,var(--gold-dark),var(--gold-light));transition:width 1s cubic-bezier(.16,1,.3,1);width:0}
-.pokecard-stat-val{font-size:.6rem;font-weight:700;color:rgba(255,255,255,.7);min-width:18px;text-align:right}
-.pokecard-footer{margin-top:auto;padding:8px 18px 12px;display:flex;align-items:center;justify-content:space-between;position:relative;z-index:5}
-.pokecard-flavor{font-size:.55rem;font-style:italic;color:rgba(255,255,255,.4);max-width:180px;line-height:1.4}
-.pokecard-set-info{display:flex;flex-direction:column;align-items:flex-end;gap:2px}
-.pokecard-set-symbol{width:18px;height:18px;border-radius:50%;background:linear-gradient(135deg,var(--gold),var(--gold-dark));display:flex;align-items:center;justify-content:center;font-size:9px;box-shadow:0 1px 4px rgba(212,175,55,.4)}
-.pokecard-set-number{font-size:.5rem;font-weight:700;color:rgba(255,255,255,.35)}
-.pokecard-rarity{display:flex;gap:1px;margin-top:2px}
-.pokecard-rarity-dot{width:4px;height:4px;border-radius:50%;background:var(--gold)}
-.pokecard-glow{position:absolute;inset:-20px;border-radius:30px;background:radial-gradient(circle,rgba(212,175,55,.2) 0%,transparent 70%);filter:blur(20px);opacity:0;transition:opacity .5s;z-index:-1;pointer-events:none}
-.pokecard:hover .pokecard-glow{opacity:1}
-
-/* ========== PROFILE ========== */
-.profile-poke-grid{display:grid;grid-template-columns:auto 1fr;gap:48px;align-items:start}
-.profile-info{display:flex;flex-direction:column;gap:12px}
-.profile-name{font-family:'Space Grotesk',sans-serif;font-size:1.3rem;font-weight:700;color:var(--gold-light)}
-.biodata-table{width:100%;background:var(--bg-card);border:1px solid var(--border);border-radius:var(--r-sm);overflow:hidden;box-shadow:var(--shadow)}
-.info-row{display:flex;align-items:center;padding:12px 18px;border-bottom:1px solid rgba(212,175,55,.06);font-size:.84rem}
-.info-row:last-child{border-bottom:none}
-.info-icon{color:var(--gold);width:22px;flex-shrink:0;font-size:.9rem;margin-right:12px;text-align:center}
-.info-label{color:var(--text-dim);min-width:130px;flex-shrink:0}
-.info-value{font-weight:500;color:var(--text);flex:1;min-width:0}
-.profile-socials{display:flex;gap:10px;margin-top:4px}
-.profile-socials a{width:40px;height:40px;border-radius:10px;background:var(--bg-card);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;transition:all .3s;text-decoration:none;color:var(--text);box-shadow:var(--shadow)}
-.profile-socials a svg{width:20px;height:20px;fill:currentColor;transition:transform .3s}
-.profile-socials a:hover{transform:translateY(-3px);border-color:var(--border-hover);background:rgba(212,175,55,.08);color:var(--gold-light)}
-
-/* ========== CORK BOARD / FUN FACTS ========== */
-.cork-board{background:#0d0c09;border:1px solid rgba(212,175,55,.1);border-radius:var(--r);padding:40px 24px 24px;margin-top:20px;display:flex;flex-wrap:wrap;gap:24px;justify-content:center;box-shadow:inset 0 4px 16px rgba(0,0,0,.6),var(--shadow);position:relative}
-.sticky-note{background:linear-gradient(135deg,rgba(18,16,12,.96),rgba(24,22,16,.94));border:1px solid rgba(212,175,55,.12);border-radius:4px;padding:28px 20px 20px;width:calc(50% - 12px);box-shadow:0 4px 12px rgba(0,0,0,.5);transition:transform .35s,box-shadow .35s;position:relative}
-.sticky-note::before{content:'';position:absolute;top:-10px;left:50%;transform:translateX(-50%) rotate(-2deg);width:60px;height:22px;background:linear-gradient(135deg,rgba(212,175,55,.35),rgba(184,150,12,.25));border:1px solid rgba(212,175,55,.15);box-shadow:0 2px 4px rgba(0,0,0,.3);z-index:2}
-.sticky-note:hover{transform:rotate(0) scale(1.04) translateY(-5px)!important;box-shadow:0 14px 28px rgba(0,0,0,.6);z-index:10}
-.sticky-note-quote{font-family:'Space Grotesk',sans-serif;font-size:2.5rem;font-weight:700;color:var(--gold);opacity:.25;line-height:1;margin-bottom:8px}
-.sticky-note-text{font-size:.84rem;color:rgba(245,240,225,.75);line-height:1.6}
-
-/* ========== HASHTAG ========== */
-.hashtag-section{margin-top:48px}
-.hashtag-pill{display:inline-flex;align-items:center;padding:5px 12px;border-radius:20px;background:rgba(212,175,55,.1);border:1px solid rgba(212,175,55,.25);color:var(--gold-light);font-size:.75rem;font-weight:600;white-space:nowrap}
-.hashtag-desc{color:rgba(245,240,225,.65);line-height:1.4;flex:1;margin-left:12px}
-
-/* ========== VIDEO ========== */
-.video-section{margin-top:48px}
-.video-section-header{margin-bottom:20px}
-.video-section-title{font-family:'Space Grotesk',sans-serif;font-size:1.2rem;font-weight:700;margin-bottom:4px;color:var(--gold-light)}
-.video-section-sub{font-size:.8rem;color:var(--text-dim)}
-.video-featured{width:100%;aspect-ratio:16/9;border-radius:var(--r);overflow:hidden;border:1px solid var(--border);box-shadow:var(--shadow-hover);margin-bottom:20px;background:#000;position:relative}
-.video-featured iframe{width:100%;height:100%;border:none}
-.video-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
-.video-card{aspect-ratio:16/9;border-radius:var(--r-sm);overflow:hidden;border:1px solid var(--border);box-shadow:var(--shadow);background:#000;position:relative;transition:all .3s;cursor:pointer}
-.video-card:hover{border-color:var(--border-hover);transform:translateY(-4px)}
-.video-card-label{position:absolute;bottom:0;left:0;right:0;padding:24px 10px 8px;background:linear-gradient(to top,rgba(0,0,0,.9),transparent);font-size:.7rem;font-weight:600;color:#fff;z-index:2;pointer-events:none}
-.video-card-play{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;z-index:3;pointer-events:none}
-.video-card-play div{width:44px;height:44px;border-radius:50%;background:rgba(0,0,0,.6);border:2px solid var(--gold);display:flex;align-items:center;justify-content:center;font-size:16px}
-
-/* ========== SPOTIFY ========== */
-.spotify-section{margin-top:48px}
-.spotify-section-header{margin-bottom:20px}
-.spotify-section-title{font-family:'Space Grotesk',sans-serif;font-size:1.2rem;font-weight:700;margin-bottom:4px;color:var(--gold-light);display:flex;align-items:center;gap:8px}
-.spotify-section-sub{font-size:.8rem;color:var(--text-dim)}
-.spotify-embed-wrap{position:relative;border-radius:var(--r);overflow:hidden;border:1px solid var(--border);box-shadow:var(--shadow-hover);background:var(--bg-card);transition:all .35s}
-.spotify-embed-wrap:hover{border-color:rgba(212,175,55,.25);box-shadow:0 12px 40px rgba(212,175,55,.12)}
-.spotify-embed-wrap::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,var(--gold),transparent);opacity:.3;z-index:2;pointer-events:none}
-.spotify-embed-inner{padding:0}
-.spotify-embed-wrap iframe{display:block;border-radius:calc(var(--r) - 1px)}
-.spotify-badge{display:inline-flex;align-items:center;gap:6px;margin-top:12px;padding:5px 14px;border-radius:50px;background:rgba(30,215,96,.06);border:1px solid rgba(30,215,96,.15);font-size:.68rem;font-weight:600;color:#1ed760;letter-spacing:.3px}
-.spotify-badge-dot{width:6px;height:6px;border-radius:50%;background:#1ed760;animation:dotBlink 2s ease-in-out infinite}
-.spotify-note{font-size:.72rem;color:var(--text-dim);margin-top:8px;opacity:.6}
-
-/* ========== EMPTY / LOAD MORE ========== */
-.empty-state{text-align:center;padding:48px 20px;color:var(--text-dim);font-size:.88rem;border:1px dashed rgba(212,175,55,.15);border-radius:var(--r);background:rgba(10,10,8,.5)}
-.loadmore-wrap{width:100%;display:flex;justify-content:center;margin-top:24px}
-.loadmore-btn{background:rgba(212,175,55,.06);color:var(--gold-light);border:1px solid rgba(212,175,55,.15);padding:12px 28px;border-radius:50px;font-family:'Inter',sans-serif;font-size:.85rem;font-weight:600;cursor:pointer;transition:all .3s;display:inline-flex;align-items:center;gap:8px}
-.loadmore-btn:hover{background:rgba(212,175,55,.12);border-color:rgba(212,175,55,.3);transform:translateY(-2px)}
-
-/* ========== SCHEDULE ========== */
-.upcoming-list{display:flex;flex-direction:column;gap:12px}
-.upcoming-card{background:var(--bg-card);border:1px solid var(--border);border-radius:var(--r);padding:16px 20px;display:flex;align-items:center;gap:16px;transition:all .3s;position:relative;overflow:hidden;box-shadow:var(--shadow);flex-wrap:wrap}
-.upcoming-card::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;opacity:0;transition:opacity .3s}
-.upcoming-card:hover{border-color:rgba(212,175,55,.25);transform:translateX(4px)}
-.upcoming-card:hover::before{opacity:1}
-.upcoming-card.cat-theater::before{background:var(--gold)}
-.upcoming-date{min-width:50px;text-align:center;padding:8px 10px;border-radius:10px;background:rgba(212,175,55,.05);border:1px solid rgba(212,175,55,.1)}
-.upcoming-date .d{font-family:'Space Grotesk',sans-serif;font-size:1.4rem;font-weight:800;color:var(--gold-light);line-height:1}
-.upcoming-date .m{font-size:.58rem;text-transform:uppercase;color:var(--text-dim);letter-spacing:.5px}
-.upcoming-info{flex:1;min-width:120px}
-.upcoming-title{font-weight:600;font-size:.92rem;margin-bottom:2px}
-.upcoming-time{font-size:.76rem;color:var(--text-dim)}
-.upcoming-tag{padding:4px 10px;border-radius:20px;font-size:.58rem;font-weight:700;text-transform:uppercase;letter-spacing:.5px;white-space:nowrap}
-.utag-theater{background:rgba(212,175,55,.1);color:var(--gold-light);border:1px solid rgba(212,175,55,.18)}
-
-/* ========== TICKET ========== */
-.ticket-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
-.ticket-card{position:relative;background:var(--bg-card);border:1px solid var(--border);border-radius:var(--r);overflow:hidden;transition:all .3s;box-shadow:var(--shadow)}
-.ticket-card:hover{border-color:rgba(212,175,55,.25);transform:translateY(-3px);box-shadow:var(--shadow-hover)}
-.ticket-top{display:flex;gap:0}
-.ticket-date-block{min-width:62px;padding:14px 8px;display:flex;flex-direction:column;align-items:center;justify-content:center;background:rgba(212,175,55,.04);border-right:1px dashed rgba(212,175,55,.15);position:relative}
-.ticket-date-block::after{content:'';position:absolute;right:-6px;top:-6px;width:12px;height:12px;border-radius:50%;background:var(--bg)}
-.ticket-date-block::before{content:'';position:absolute;right:-6px;bottom:-6px;width:12px;height:12px;border-radius:50%;background:var(--bg)}
-.ticket-dow{font-size:.48rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--gold);opacity:.6;margin-bottom:2px}
-.ticket-day{font-family:'Space Grotesk',sans-serif;font-size:1.5rem;font-weight:800;color:var(--gold-light);line-height:1}
-.ticket-mon{font-size:.58rem;font-weight:600;color:var(--text-dim);text-transform:uppercase;letter-spacing:.5px}
-.ticket-body{flex:1;padding:12px;display:flex;flex-direction:column;gap:5px;min-width:0;overflow:hidden}
-.ticket-header{display:flex;align-items:flex-start;justify-content:space-between;gap:6px}
-.ticket-title{font-family:'Space Grotesk',sans-serif;font-size:.82rem;font-weight:700;color:#fff;line-height:1.2;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.ticket-subtitle{font-size:.6rem;font-weight:400;color:rgba(255,255,255,.3);margin-top:1px}
-.ticket-type-badge{display:inline-flex;align-items:center;gap:3px;padding:3px 8px;border-radius:20px;font-size:.5rem;font-weight:700;text-transform:uppercase;letter-spacing:.3px;white-space:nowrap;flex-shrink:0}
-.badge-vc{background:rgba(168,85,247,.1);color:#c084fc;border:1px solid rgba(168,85,247,.18)}
-.badge-mg{background:rgba(212,175,55,.1);color:var(--gold-light);border:1px solid rgba(212,175,55,.18)}
-.badge-2shoot{background:rgba(252,224,71,.08);color:var(--lemon);border:1px solid rgba(252,224,71,.15)}
-.ticket-meta{display:flex;flex-wrap:wrap;gap:6px}
-.ticket-meta-item{display:flex;align-items:center;gap:3px;font-size:.62rem;color:var(--text-dim)}
-.ticket-meta-icon{font-size:.65rem}
-.ticket-meta-val{color:rgba(255,255,255,.6);font-weight:500}
-.ticket-footer{display:flex;align-items:center;justify-content:space-between;gap:6px;padding-top:6px;border-top:1px solid rgba(212,175,55,.06)}
-.ticket-price{font-family:'Space Grotesk',sans-serif;font-size:.9rem;font-weight:800;color:var(--gold-light)}
-.ticket-price span{font-size:.55rem;font-weight:400;color:var(--text-dim)}
-.ticket-status{display:inline-flex;align-items:center;gap:3px;padding:2px 7px;border-radius:20px;font-size:.48rem;font-weight:700;text-transform:uppercase;letter-spacing:.3px}
-.status-open{background:rgba(34,197,94,.1);color:#4ade80;border:1px solid rgba(34,197,94,.15)}
-.status-limited{background:rgba(252,224,71,.08);color:var(--lemon);border:1px solid rgba(252,224,71,.15)}
-.status-sold{background:rgba(239,68,68,.08);color:#f87171;border:1px solid rgba(239,68,68,.12)}
-.status-dot{width:4px;height:4px;border-radius:50%;background:currentColor}
-.ticket-sold-card{opacity:.45;pointer-events:none}
-
-/* ========== UNIT SONG ========== */
-.unit-scroll-wrap{overflow:hidden;padding:4px 0;-webkit-mask-image:linear-gradient(to right,transparent,black 4%,black 96%,transparent);mask-image:linear-gradient(to right,transparent,black 4%,black 96%,transparent)}
-.unit-scroll-track{display:flex;gap:14px;width:max-content;animation:unitScroll 22s linear infinite}
-.unit-scroll-track:hover{animation-play-state:paused}
-@keyframes unitScroll{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
-.unit-card{background:var(--bg-card);border:1px solid var(--border);border-radius:var(--r-sm);padding:14px 18px;transition:all .3s;position:relative;overflow:hidden;box-shadow:var(--shadow);min-width:200px;flex-shrink:0}
-.unit-card:hover{border-color:rgba(212,175,55,.25);transform:translateY(-3px)}
-.unit-card-num{font-family:'Space Grotesk',sans-serif;font-size:1.8rem;font-weight:800;color:rgba(212,175,55,.07);position:absolute;top:4px;right:10px;line-height:1}
-.unit-card-setlist{font-size:.52rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--gold);opacity:.6;margin-bottom:4px}
-.unit-card-name{font-family:'Space Grotesk',sans-serif;font-size:.88rem;font-weight:700;color:#fff;margin-bottom:2px}
-.unit-card-original{font-size:.65rem;color:var(--text-dim);font-style:italic}
-
-/* ========== RESCHEDULE ========== */
-.cat-summary{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:32px}
-.cat-summary-card{background:var(--bg-card);border:1px solid var(--border);border-radius:var(--r-sm);padding:18px 14px;text-align:center;transition:all .3s;box-shadow:var(--shadow);position:relative;overflow:hidden}
-.cat-summary-card:hover{transform:translateY(-3px)}
-.cat-summary-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px}
-.cat-summary-card.cat-theater-s::before{background:var(--gold)}
-.cat-summary-icon{font-size:1.6rem;margin-bottom:8px}
-.cat-summary-count{font-family:'Space Grotesk',sans-serif;font-size:2rem;font-weight:800;line-height:1}
-.cat-summary-card.cat-theater-s .cat-summary-count{color:var(--gold-light)}
-.cat-summary-label{font-size:.68rem;font-weight:600;color:var(--text-dim);text-transform:uppercase;letter-spacing:.5px;margin-top:4px}
-.history-section{margin-bottom:28px}
-.history-section-header{display:flex;align-items:center;gap:10px;margin-bottom:12px;padding-bottom:8px;border-bottom:1px solid rgba(212,175,55,.06)}
-.history-section-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
-.history-section-title{font-family:'Space Grotesk',sans-serif;font-size:.95rem;font-weight:700}
-.show-accordion{display:flex;flex-direction:column;gap:10px}
-.show-accordion-item{background:var(--bg-card);border:1px solid var(--border);border-radius:var(--r-sm);overflow:hidden;transition:all .3s;box-shadow:var(--shadow)}
-.show-accordion-item:hover{border-color:rgba(249,115,22,.15)}
-.show-accordion-item.open{border-color:rgba(249,115,22,.2)}
-.show-accordion-header{display:flex;align-items:center;gap:14px;padding:14px 18px;cursor:pointer;transition:all .25s;user-select:none;-webkit-tap-highlight-color:transparent}
-.show-accordion-header:hover{background:rgba(249,115,22,.03)}
-.show-acc-icon{width:36px;height:36px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:1.1rem;flex-shrink:0}
-.show-acc-icon.icon-theater{background:rgba(212,175,55,.08);border:1px solid rgba(212,175,55,.15)}
-.show-acc-info{flex:1;min-width:0}
-.show-acc-name{font-family:'Space Grotesk',sans-serif;font-size:.92rem;font-weight:700;color:#fff;margin-bottom:1px}
-.show-acc-meta{font-size:.68rem;color:var(--text-dim);display:flex;align-items:center;gap:10px;flex-wrap:wrap}
-.show-acc-arrow{width:24px;height:24px;border-radius:6px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.06);display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .3s;color:var(--text-dim);font-size:.7rem}
-.show-accordion-item.open .show-acc-arrow{transform:rotate(180deg);color:var(--orange-light);background:rgba(249,115,22,.08);border-color:rgba(249,115,22,.15)}
-.show-accordion-body{max-height:0;overflow:hidden;transition:max-height .4s cubic-bezier(.4,0,.2,1)}
-.show-accordion-item.open .show-accordion-body{max-height:600px}
-.show-accordion-inner{padding:0 18px 16px;display:flex;flex-direction:column;gap:8px}
-.show-detail-card{display:flex;align-items:flex-start;gap:12px;padding:12px 14px;border-radius:10px;background:rgba(255,255,255,.015);border:1px solid rgba(255,255,255,.04);transition:all .25s}
-.show-detail-date{min-width:44px;text-align:center;padding:6px 4px;border-radius:8px;background:rgba(249,115,22,.04);border:1px solid rgba(249,115,22,.06);flex-shrink:0}
-.show-detail-date .d{font-family:'Space Grotesk',sans-serif;font-size:1.1rem;font-weight:800;color:var(--orange-light);line-height:1}
-.show-detail-date .m{font-size:.5rem;text-transform:uppercase;color:var(--text-dim);letter-spacing:.5px}
-.show-detail-info{flex:1;min-width:0}
-.show-detail-time{font-size:.78rem;font-weight:600;color:rgba(255,255,255,.7);margin-bottom:3px}
-
-/* ========== GALLERY ========== */
-.gal-folders-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:14px}
-.gal-folder-card{position:relative;background:var(--bg-card);border:1px solid var(--border);border-radius:var(--r);overflow:hidden;cursor:pointer;backdrop-filter:blur(10px);transition:all .35s;opacity:0;transform:translateY(16px);min-width:0}
-.gal-folder-card.visible{opacity:1;transform:translateY(0)}
-.gal-folder-card::after{content:'';position:absolute;bottom:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,var(--gold),transparent);opacity:0;transition:opacity .35s}
-.gal-folder-card:hover{border-color:rgba(212,175,55,.25);transform:translateY(-4px);box-shadow:0 12px 40px rgba(212,175,55,.1)}
-.gal-folder-card:hover::after{opacity:.4}
-.gal-folder-card.purple-theme{border-color:rgba(192,132,252,.12)}
-.gal-folder-card.purple-theme::after{background:linear-gradient(90deg,transparent,var(--purple),transparent)}
-.gal-folder-card.purple-theme:hover{border-color:rgba(192,132,252,.3);box-shadow:0 12px 40px rgba(192,132,252,.1)}
-.gal-folder-cover{position:relative;width:100%;aspect-ratio:4/3;overflow:hidden;background:rgba(255,255,255,.02)}
-.gal-folder-cover img{width:100%;height:100%;object-fit:cover;object-position:50% 20%;display:block;transition:transform .5s}
-.gal-folder-card:hover .gal-folder-cover img{transform:scale(1.06)}
-.gal-folder-cover-overlay{position:absolute;inset:0;background:linear-gradient(to top,rgba(5,5,5,.2) 0%,rgba(5,5,5,.7) 50%,rgba(5,5,5,.92) 100%);pointer-events:none}
-.gal-folder-badge{position:absolute;top:10px;right:10px;padding:3px 9px;border-radius:50px;background:rgba(0,0,0,.45);backdrop-filter:blur(8px);border:1px solid rgba(255,255,255,.08);font-size:.6rem;color:rgba(255,255,255,.75);pointer-events:none;display:flex;align-items:center;gap:4px}
-.gal-folder-badge-dot{width:5px;height:5px;background:var(--gold);border-radius:50%;animation:dotBlink 2s ease-in-out infinite}
-.gal-folder-badge-dot.purple{background:var(--purple)}
-.gal-folder-info{padding:14px;display:flex;align-items:center;gap:10px}
-.gal-folder-icon{width:36px;height:36px;border-radius:9px;background:rgba(212,175,55,.1);display:flex;align-items:center;justify-content:center;flex-shrink:0}
-.gal-folder-icon svg{width:16px;height:16px;stroke:var(--gold-light);fill:none;stroke-width:1.8}
-.gal-folder-icon.purple{background:rgba(192,132,252,.1)}
-.gal-folder-icon.purple svg{stroke:var(--purple-light)}
-.gal-folder-text{flex:1;min-width:0}
-.gal-folder-name{font-size:.84rem;font-weight:600;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.gal-folder-count{font-size:.68rem;color:var(--text-dim);margin-top:1px}
-.gal-folder-count span{color:var(--gold-light);font-weight:600}
-.gal-folder-count.purple span{color:var(--purple-light)}
-.gal-folder-arrow{width:16px;height:16px;stroke:var(--text-dim);fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;opacity:.2;flex-shrink:0;transition:all .3s}
-.gal-folder-card:hover .gal-folder-arrow{opacity:.7;stroke:var(--gold-light);transform:translateX(3px)}
-.gal-folder-card.purple-theme:hover .gal-folder-arrow{stroke:var(--purple-light)}
-.gal-photos-header{display:flex;align-items:center;gap:14px;margin-bottom:20px}
-.gal-photos-header h3{font-size:1.1rem;font-weight:600;color:#fff;flex:1}
-.gal-photos-count{font-size:.76rem;color:var(--text-dim);padding:4px 12px;border-radius:50px;background:rgba(255,255,255,.04);border:1px solid var(--border)}
-.gal-masonry{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
-.gal-item{position:relative;border-radius:var(--r-sm);overflow:hidden;cursor:pointer;border:1px solid var(--border);transition:all .4s;opacity:0;transform:translateY(20px) scale(.97)}
-.gal-item.visible{opacity:1;transform:translateY(0) scale(1)}
-.gal-item:hover{border-color:rgba(212,175,55,.3);box-shadow:0 8px 32px rgba(212,175,55,.1)}
-.gal-item.purple-theme:hover{border-color:rgba(192,132,252,.3);box-shadow:0 8px 32px rgba(192,132,252,.1)}
-.gal-item-img-wrap{position:relative;overflow:hidden;width:100%;aspect-ratio:4/3;background:var(--bg)}
-.gal-item-img-wrap img{width:100%;height:100%;object-fit:cover;object-position:50% 20%;display:block;transition:transform .55s}
-.gal-item:hover .gal-item-img-wrap img{transform:scale(1.07)}
-.gal-item::before{content:'';position:absolute;top:0;left:-130%;width:65%;height:100%;background:linear-gradient(105deg,transparent 30%,rgba(255,255,255,.07) 50%,transparent 70%);transform:skewX(-18deg);transition:left .75s;z-index:4;pointer-events:none}
-.gal-item:hover::before{left:150%}
-.gal-item-overlay{position:absolute;inset:0;background:linear-gradient(to top,rgba(0,0,0,.35) 0%,transparent 100%);opacity:0;transition:opacity .35s;z-index:3;pointer-events:none;display:flex;align-items:center;justify-content:center}
-.gal-item:hover .gal-item-overlay{opacity:1}
-.gal-item-zoom{width:40px;height:40px;border-radius:50%;background:rgba(255,255,255,.12);backdrop-filter:blur(12px);border:1px solid rgba(255,255,255,.18);display:flex;align-items:center;justify-content:center;transform:scale(.6);transition:transform .35s}
-.gal-item:hover .gal-item-zoom{transform:scale(1)}
-.gal-item-zoom svg{width:17px;height:17px;stroke:rgba(255,255,255,.9);fill:none;stroke-width:2}
-.gal-empty{grid-column:1/-1;text-align:center;padding:56px 20px;color:var(--text-dim)}
-.back-btn{background:var(--bg-card);border:1px solid var(--border);color:var(--text);width:38px;height:38px;border-radius:var(--r-sm);cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .3s;flex-shrink:0}
-.back-btn:hover{background:rgba(212,175,55,.06);border-color:var(--border-hover);transform:translateX(-2px)}
-.back-btn svg{width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
-
-/* ========== LIGHTBOX ========== */
-.lightbox{position:fixed;inset:0;z-index:2000;display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity .35s}
-.lightbox-backdrop{position:absolute;inset:0;background:rgba(0,0,0,.92);backdrop-filter:blur(12px)}
-.lightbox.active{opacity:1;pointer-events:auto}
-.lightbox-content{position:relative;z-index:1;display:flex;align-items:center;justify-content:center;width:100%;height:100%;padding:60px 16px 40px}
-.lightbox-content img{max-width:90vw;max-height:82vh;border-radius:var(--r);box-shadow:0 24px 80px rgba(0,0,0,.6);transition:opacity .22s;cursor:default;object-fit:contain}
-.lightbox-close{position:absolute;top:max(16px,env(safe-area-inset-top));right:max(16px,env(safe-area-inset-right));z-index:2;width:44px;height:44px;border-radius:50%;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.12);color:white;font-size:22px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .3s;backdrop-filter:blur(8px)}
-.lightbox-close:hover{background:rgba(255,255,255,.16);transform:rotate(90deg)}
-.lb-nav{position:absolute;top:50%;transform:translateY(-50%);z-index:2;width:46px;height:46px;border-radius:50%;background:rgba(255,255,255,.06);backdrop-filter:blur(10px);border:1px solid rgba(255,255,255,.1);display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .3s}
-.lb-nav:hover{background:rgba(212,175,55,.2);border-color:rgba(212,175,55,.3)}
-.lb-nav svg{width:20px;height:20px;stroke:rgba(255,255,255,.8);fill:none;stroke-width:2.5}
-.lb-prev{left:14px}
-.lb-next{right:14px}
-.lb-nav.disabled{opacity:.2;pointer-events:none}
-.lb-counter{position:absolute;bottom:18px;left:50%;transform:translateX(-50%);z-index:2;padding:6px 16px;border-radius:50px;background:rgba(0,0,0,.4);backdrop-filter:blur(10px);border:1px solid rgba(255,255,255,.08);font-size:.76rem;color:rgba(255,255,255,.6)}
-
-/* ========== FANBASE ========== */
-.fb-banner{position:relative;border-radius:var(--r);overflow:hidden;margin-bottom:20px;background:radial-gradient(ellipse 80% 100% at 30% 80%,rgba(212,175,55,.12) 0%,transparent 60%),linear-gradient(160deg,rgba(10,10,8,.9) 0%,rgba(5,5,5,.95) 100%);border:1px solid var(--border);padding:36px 28px 32px}
-.fb-banner::after{content:'';position:absolute;bottom:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,var(--gold),transparent);opacity:.3}
-.fb-banner-inner{position:relative;z-index:1;display:flex;align-items:center;gap:24px}
-.fb-logo-wrap{position:relative;flex-shrink:0}
-.fb-logo-glow{position:absolute;inset:-14px;background:radial-gradient(circle,var(--gold-glow) 0%,transparent 70%);border-radius:50%;filter:blur(22px);opacity:.55;animation:glowPulse 4s ease-in-out infinite}
-@keyframes glowPulse{0%,100%{opacity:.4;transform:scale(1)}50%{opacity:.65;transform:scale(1.05)}}
-.fb-logo{position:relative;width:88px;height:88px;border-radius:50%;object-fit:cover;display:block;border:2px solid rgba(212,175,55,.35);box-shadow:0 8px 36px rgba(0,0,0,.4);transition:transform .4s}
-.fb-banner:hover .fb-logo{transform:scale(1.04)}
-.fb-name{font-size:1.5rem;font-weight:700;letter-spacing:1px;background:linear-gradient(135deg,var(--gold-light) 20%,var(--gold) 80%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
-.fb-tagline{font-size:.84rem;color:var(--text-dim);margin-top:4px}
-.fb-badge{display:inline-flex;align-items:center;gap:5px;margin-top:10px;padding:4px 12px;background:rgba(212,175,55,.1);border:1px solid rgba(212,175,55,.2);border-radius:50px;font-size:.7rem;color:var(--gold-light)}
-.fb-badge-dot{width:6px;height:6px;background:var(--gold);border-radius:50%;animation:dotBlink 2s ease-in-out infinite}
-.fb-desc-card{background:var(--bg-card);border:1px solid var(--border);border-radius:var(--r-sm);padding:24px 28px;margin-bottom:20px;position:relative;overflow:hidden}
-.fb-desc-card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,var(--gold),transparent);opacity:.3}
-.fb-desc-title{font-size:.82rem;color:var(--text-dim);margin-bottom:10px;text-transform:uppercase;letter-spacing:1px;font-weight:600}
-.fb-desc-text{font-size:.9rem;color:rgba(245,240,225,.75);line-height:1.8}
-.fb-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:20px}
-.fb-stat{background:var(--bg-card);border:1px solid var(--border);border-radius:var(--r-sm);padding:18px 14px;text-align:center;transition:all .35s;position:relative;overflow:hidden}
-.fb-stat::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,var(--gold),transparent);opacity:0;transition:opacity .35s}
-.fb-stat:hover{border-color:rgba(212,175,55,.2);background:rgba(212,175,55,.06);transform:translateY(-3px)}
-.fb-stat:hover::before{opacity:.6}
-.fb-stat-icon{width:32px;height:32px;margin:0 auto 10px;display:flex;align-items:center;justify-content:center;border-radius:8px;background:rgba(212,175,55,.1);color:var(--gold-light);font-size:1rem}
-.fb-stat-label{font-size:.68rem;color:var(--text-dim);text-transform:uppercase;letter-spacing:.7px;margin-bottom:4px}
-.fb-stat-value{font-size:.92rem;font-weight:600;color:var(--text)}
-.fb-socials-card{background:var(--bg-card);border:1px solid var(--border);border-radius:var(--r-sm);padding:24px 28px;margin-bottom:20px;position:relative;overflow:hidden}
-.fb-socials-card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,var(--gold),transparent);opacity:.25}
-.fb-socials-title{font-size:.82rem;color:var(--text-dim);margin-bottom:16px}
-.fb-socials-list{display:flex;flex-direction:column;gap:8px}
-.fb-social-item{display:flex;align-items:center;gap:14px;padding:12px 16px;border-radius:12px;background:rgba(255,255,255,.02);border:1px solid rgba(255,255,255,.05);text-decoration:none;color:var(--text);transition:all .3s}
-.fb-social-item:hover{background:rgba(255,255,255,.06);border-color:var(--border-hover);transform:translateX(4px)}
-.fb-social-item-icon{width:36px;height:36px;border-radius:9px;display:flex;align-items:center;justify-content:center;flex-shrink:0;background:rgba(212,175,55,.08)}
-.fb-social-item-icon svg{width:17px;height:17px;fill:rgba(255,255,255,.6)}
-.fb-social-item.ig .fb-social-item-icon{background:rgba(225,48,108,.12)}
-.fb-social-item.ig:hover .fb-social-item-icon svg{fill:#E1306C}
-.fb-social-item.x .fb-social-item-icon{background:rgba(255,255,255,.08)}
-.fb-social-item.x:hover .fb-social-item-icon svg{fill:#fff}
-.fb-social-item.tt .fb-social-item-icon{background:rgba(0,242,234,.1)}
-.fb-social-item.tt:hover .fb-social-item-icon svg{fill:#00F2EA}
-.fb-social-item-text{flex:1;min-width:0}
-.fb-social-item-name{font-size:.88rem;font-weight:500}
-.fb-social-item-handle{font-size:.76rem;color:var(--text-dim);margin-top:1px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:120px}
-.fb-social-item-arrow{width:16px;height:16px;opacity:.3;flex-shrink:0;transition:all .3s}
-.fb-social-item:hover .fb-social-item-arrow{opacity:.7;transform:translateX(3px)}
-.fb-faq-section{margin-bottom:20px}
-.fb-faq-title{font-size:1.1rem;font-weight:600;color:var(--text);margin-bottom:16px;display:flex;align-items:center;gap:10px}
-.fb-faq-title-icon{width:24px;height:24px;stroke:var(--gold-light);fill:none;stroke-width:2;flex-shrink:0}
-.fb-faq-list{display:flex;flex-direction:column;gap:10px}
-.fb-faq-item{background:var(--bg-card);border:1px solid var(--border);border-radius:var(--r-sm);backdrop-filter:blur(10px);overflow:hidden;transition:all .3s}
-.fb-faq-item:hover{border-color:rgba(212,175,55,.2)}
-.fb-faq-item.active{border-color:rgba(212,175,55,.3);box-shadow:0 4px 16px rgba(212,175,55,.05)}
-.fb-faq-question{width:100%;display:flex;align-items:center;justify-content:space-between;padding:16px 20px;background:none;border:none;color:var(--text);font-family:'Inter',sans-serif;font-size:.88rem;font-weight:500;cursor:pointer;text-align:left;transition:color .3s;gap:12px}
-.fb-faq-item.active .fb-faq-question{color:var(--gold-light)}
-.fb-faq-arrow{width:18px;height:18px;stroke:var(--text-dim);fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0;transition:all .3s}
-.fb-faq-item.active .fb-faq-arrow{stroke:var(--gold-light);transform:rotate(180deg)}
-.fb-faq-answer{max-height:0;overflow:hidden;transition:max-height .4s ease,padding .4s ease}
-.fb-faq-item.active .fb-faq-answer{max-height:300px;padding:0 20px 16px}
-.fb-faq-answer p{font-size:.84rem;color:var(--text-dim);line-height:1.7;margin:0}
-.fb-reg-section{margin-top:20px}
-.fb-reg-card{background:var(--bg-card);border:1px solid var(--border);border-radius:var(--r-sm);padding:24px;backdrop-filter:blur(10px);position:relative;overflow:hidden;text-align:center}
-.fb-reg-card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,var(--gold),transparent);opacity:.3}
-.fb-reg-title{font-size:.92rem;font-weight:600;color:var(--text);margin-bottom:14px;display:flex;align-items:center;justify-content:center;gap:8px}
-.fb-reg-status{display:inline-flex;align-items:center;gap:8px;padding:6px 18px;border-radius:50px;font-size:.82rem;font-weight:600;letter-spacing:.5px;margin-bottom:16px}
-.fb-reg-status.open{background:rgba(94,234,212,.12);border:1px solid rgba(94,234,212,.25);color:#5eead4}
-.fb-reg-status.closed{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);color:var(--text-dim)}
-.fb-reg-dot{width:8px;height:8px;border-radius:50%}
-.fb-reg-status.open .fb-reg-dot{background:#5eead4;animation:dotBlink 2s ease-in-out infinite}
-.fb-reg-status.closed .fb-reg-dot{background:var(--text-dim)}
-.fb-reg-btn{display:inline-flex;align-items:center;gap:8px;padding:12px 28px;border-radius:50px;font-family:'Inter',sans-serif;font-size:.88rem;font-weight:600;cursor:pointer;transition:all .3s;text-decoration:none;border:none}
-.fb-reg-btn.open{background:linear-gradient(135deg,var(--gold),var(--gold-dark));color:#050505;box-shadow:0 6px 24px var(--gold-glow)}
-.fb-reg-btn.open:hover{transform:translateY(-2px);box-shadow:0 10px 32px rgba(212,175,55,.4)}
-.fb-reg-btn.closed{background:rgba(255,255,255,.06);color:var(--text-dim);cursor:not-allowed;border:1px solid rgba(255,255,255,.1)}
-.fb-reg-btn svg{width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:2}
-.fb-reg-note{font-size:.72rem;color:var(--text-dim);margin-top:12px;line-height:1.5}
-
-/* ========== COMING SOON ========== */
-.coming-soon-wrap{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:80vh;text-align:center;padding:80px 24px;position:relative}
-.cs-glow{position:absolute;width:320px;height:320px;border-radius:50%;background:radial-gradient(circle,rgba(212,175,55,.12) 0%,transparent 70%);top:50%;left:50%;transform:translate(-50%,-50%);animation:csGlowPulse 5s ease-in-out infinite;pointer-events:none}
-@keyframes csGlowPulse{0%,100%{opacity:.6;transform:translate(-50%,-50%) scale(1)}50%{opacity:1;transform:translate(-50%,-50%) scale(1.15)}}
-.cs-content{position:relative;z-index:2}
-.cs-icon{font-size:56px;margin-bottom:20px;animation:csIconBob 3s ease-in-out infinite}
-@keyframes csIconBob{0%,100%{transform:translateY(0)}50%{transform:translateY(-10px)}}
-.cs-label{display:inline-flex;align-items:center;gap:6px;padding:6px 16px;border-radius:20px;background:rgba(212,175,55,.08);border:1px solid rgba(212,175,55,.15);font-size:.65rem;font-weight:700;letter-spacing:2.5px;text-transform:uppercase;color:var(--gold-light);margin-bottom:20px}
-.cs-label-dot{width:5px;height:5px;border-radius:50%;background:var(--gold);animation:dotBlink 1.5s ease-in-out infinite}
-.cs-title{font-family:'Space Grotesk',sans-serif;font-size:clamp(2rem,5vw,3rem);font-weight:700;letter-spacing:-.03em;line-height:1.1;margin-bottom:14px}
-.cs-title .t-dim{color:rgba(255,255,255,.1);font-weight:300}
-.cs-title .t-mint{background:linear-gradient(135deg,var(--gold-light),var(--gold));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
-.cs-desc{font-size:.92rem;color:var(--text-dim);max-width:420px;margin:0 auto 14px;line-height:1.65}
-.cs-divider{display:flex;align-items:center;justify-content:center;gap:16px;margin-bottom:32px}
-.cs-divider-line{width:60px;height:1px;background:linear-gradient(90deg,transparent,rgba(212,175,55,.35),transparent)}
-.cs-divider-diamond{width:6px;height:6px;transform:rotate(45deg);background:var(--gold);opacity:.5}
-
-/* ========== FOOTER ========== */
-.footer{text-align:center;padding:40px 24px 24px;border-top:1px solid rgba(212,175,55,.1);margin-top:48px}
-.footer-brand{font-family:'Space Grotesk',sans-serif;font-size:1.2rem;font-weight:700;margin-bottom:4px}
-.footer-brand .lib{color:rgba(255,255,255,.15);font-weight:300}
-.footer-brand .raly{color:var(--gold)}
-.footer-sub{font-size:.7rem;color:var(--text-dim)}
-.footer-copy{font-size:.65rem;color:var(--text-dim);margin-top:16px;opacity:.5}
-
-/* ========== TOAST ========== */
-.toast{position:fixed;bottom:max(24px,env(safe-area-inset-bottom));left:50%;transform:translateX(-50%) translateY(80px);z-index:99999;padding:14px 28px;border-radius:14px;background:rgba(10,10,8,.95);backdrop-filter:blur(16px);border:1px solid rgba(212,175,55,.2);box-shadow:0 8px 30px rgba(212,175,55,.2);font-size:.85rem;font-weight:500;color:var(--gold-light);opacity:0;transition:all .4s cubic-bezier(.16,1,.3,1);pointer-events:none;display:flex;align-items:center;gap:10px}
-.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
-
-/* ========== BTT ========== */
-.btt{position:fixed;bottom:max(24px,env(safe-area-inset-bottom));right:24px;z-index:800;width:42px;height:42px;border-radius:50%;background:var(--bg-card);border:1px solid var(--border);color:var(--gold);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:16px;opacity:0;pointer-events:none;transform:translateY(12px);transition:all .35s;box-shadow:var(--shadow)}
-.btt.show{opacity:1;pointer-events:auto;transform:translateY(0)}
-
-/* ========== REVEAL ========== */
-.rv{opacity:0;transform:translateY(24px);transition:all .7s cubic-bezier(.16,1,.3,1)}
-.rv.show{opacity:1;transform:translateY(0)}
-
-/* ========== BIRTHDAY OVERLAY ========== */
-.bday-overlay{position:fixed;inset:0;z-index:9800;background:rgba(5,5,5,.97);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);display:flex;flex-direction:column;align-items:center;opacity:0;pointer-events:none;transition:opacity .6s ease;overflow-y:auto;overflow-x:hidden}
-.bday-overlay.open{opacity:1;pointer-events:auto}
-.bday-close{position:fixed;top:max(16px,env(safe-area-inset-top));right:max(16px,env(safe-area-inset-right));z-index:9850;width:44px;height:44px;border-radius:50%;background:rgba(212,175,55,.08);border:1px solid rgba(212,175,55,.15);color:var(--gold-light);font-size:1.3rem;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .3s;backdrop-filter:blur(8px)}
-.bday-close:hover{background:rgba(212,175,55,.2);border-color:rgba(212,175,55,.4);transform:rotate(90deg)}
-.bday-content{width:100%;max-width:800px;padding:60px 20px 32px;display:flex;flex-direction:column;align-items:center;min-height:100vh}
-.bday-top{text-align:center;margin-bottom:28px;position:relative}
-.bday-label-top{font-size:.6rem;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:var(--gold);opacity:.7;margin-bottom:4px}
-.bday-name-title{font-family:'Space Grotesk',sans-serif;font-size:clamp(1.6rem,5vw,2.2rem);font-weight:700;background:linear-gradient(135deg,var(--gold-light),var(--gold));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:2px}
-.bday-date-label{font-size:.85rem;color:var(--text-dim);margin-bottom:24px}
-.bday-timer{display:flex;align-items:center;justify-content:center;gap:8px}
-.bday-time-unit{display:flex;flex-direction:column;align-items:center;gap:4px;min-width:clamp(48px,14vw,64px)}
-.bday-time-num{font-family:'Space Grotesk',sans-serif;font-size:clamp(2rem,6vw,2.8rem);font-weight:800;line-height:1;background:linear-gradient(180deg,#fff,var(--gold-light));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
-.bday-time-label{font-size:.55rem;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--gold);opacity:.5}
-.bday-time-sep{font-family:'Space Grotesk',sans-serif;font-size:clamp(1.2rem,4vw,2rem);font-weight:700;color:var(--gold);opacity:.3;margin-top:-12px}
-.bday-glow-ring{position:absolute;width:240px;height:240px;border-radius:50%;background:radial-gradient(circle,rgba(212,175,55,.1) 0%,transparent 70%);top:50%;left:50%;transform:translate(-50%,-50%);pointer-events:none;animation:csGlowPulse 4s ease-in-out infinite}
-.bday-divider{display:flex;align-items:center;gap:12px;width:100%;margin:20px 0 24px;opacity:.4}
-.bday-divider-line{flex:1;height:1px;background:linear-gradient(90deg,transparent,rgba(212,175,55,.3),transparent)}
-.bday-divider-icon{font-size:.75rem;color:var(--gold-light)}
-.bday-forum-btn{display:inline-flex;align-items:center;gap:10px;padding:14px 32px;border-radius:50px;background:linear-gradient(135deg,var(--gold),var(--gold-dark));color:#050505;font-family:'Inter',sans-serif;font-size:.9rem;font-weight:700;border:none;cursor:pointer;transition:all .3s;box-shadow:0 6px 24px rgba(212,175,55,.3);margin-bottom:8px}
-.bday-forum-btn:hover{transform:translateY(-2px);box-shadow:0 10px 36px rgba(212,175,55,.45)}
-.bday-letters-header{width:100%;text-align:left;margin-top:20px;margin-bottom:16px}
-.bday-letters-title{font-family:'Space Grotesk',sans-serif;font-size:1rem;font-weight:700;color:var(--gold-light);display:flex;align-items:center;gap:8px}
-.bday-letters-count{font-size:.7rem;font-weight:600;color:var(--gold);background:rgba(212,175,55,.08);border:1px solid rgba(212,175,55,.12);padding:2px 10px;border-radius:20px}
-.bday-letters-sub{font-size:.78rem;color:var(--text-dim);margin-top:4px}
-.letters-masonry{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;width:100%}
-.letter-card{background:rgba(14,12,10,.9);border:1px solid rgba(212,175,55,.1);border-radius:var(--r-sm);padding:22px 16px 16px;transition:all .35s cubic-bezier(.16,1,.3,1);position:relative;opacity:0;transform:translateY(12px) rotate(var(--note-rot,0deg));animation:letterIn .5s ease forwards;overflow:hidden}
-@keyframes letterIn{to{opacity:1;transform:translateY(0) rotate(var(--note-rot,0deg))}}
-.letter-card:hover{border-color:rgba(212,175,55,.3);box-shadow:0 8px 28px rgba(0,0,0,.4),0 0 12px rgba(212,175,55,.06);transform:translateY(-6px) rotate(0) scale(1.03)!important;z-index:10}
-.letter-card::before{content:'';position:absolute;top:-8px;left:50%;transform:translateX(-50%) rotate(var(--pin-rot,0deg));width:30px;height:17px;background:linear-gradient(135deg,rgba(212,175,55,.3),rgba(184,150,12,.18));border:1px solid rgba(212,175,55,.12);border-radius:2px;box-shadow:0 2px 6px rgba(0,0,0,.3);z-index:2;transition:opacity .3s}
-.letter-card:hover::before{opacity:.6}
-.letter-card-accent{position:absolute;top:0;left:0;bottom:0;width:3px;border-radius:3px 0 0 3px}
-.letter-card:nth-child(3n+1){background:rgba(16,14,11,.92)}
-.letter-card:nth-child(3n+2){background:rgba(14,13,10,.88)}
-.letter-card:nth-child(3n){background:rgba(18,16,12,.9)}
-.letter-card:nth-child(3n+1) .letter-card-accent{background:linear-gradient(180deg,var(--gold),rgba(212,175,55,.1))}
-.letter-card:nth-child(3n+2) .letter-card-accent{background:linear-gradient(180deg,var(--peach),rgba(230,200,138,.1))}
-.letter-card:nth-child(3n) .letter-card-accent{background:linear-gradient(180deg,var(--lemon),rgba(252,224,71,.1))}
-.letter-card:nth-child(3n+1)::before{background:linear-gradient(135deg,rgba(212,175,55,.3),rgba(184,150,12,.18))}
-.letter-card:nth-child(3n+2)::before{background:linear-gradient(135deg,rgba(230,200,138,.3),rgba(212,175,55,.15))}
-.letter-card:nth-child(3n)::before{background:linear-gradient(135deg,rgba(252,224,71,.25),rgba(252,224,71,.1))}
-.letter-card-header{display:flex;align-items:center;gap:10px;margin-bottom:10px}
-.letter-avatar{width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,rgba(212,175,55,.15),rgba(184,150,12,.08));border:1px solid rgba(212,175,55,.2);display:flex;align-items:center;justify-content:center;font-family:'Space Grotesk',sans-serif;font-size:.82rem;font-weight:700;color:var(--gold-light);flex-shrink:0}
-.letter-meta{flex:1;min-width:0}
-.letter-name{font-size:.82rem;font-weight:600;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.letter-social{font-size:.62rem;color:var(--gold);opacity:.7;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.letter-card-time{font-size:.55rem;color:rgba(255,255,255,.2);flex-shrink:0}
-.letter-msg{font-size:.78rem;color:rgba(245,240,225,.7);line-height:1.6;white-space:pre-wrap;word-break:break-word;display:-webkit-box;-webkit-line-clamp:5;-webkit-box-orient:vertical;overflow:hidden}
-.letters-empty{grid-column:1/-1;text-align:center;padding:44px 24px;color:var(--text-dim);font-size:.88rem;border:1px dashed rgba(212,175,55,.12);border-radius:var(--r-sm);background:rgba(10,10,8,.4);display:flex;flex-direction:column;align-items:center;gap:8px}
-.letters-empty-icon{font-size:2.4rem;opacity:.3;margin-bottom:4px}
-.letters-empty-text{line-height:1.6}
-.letters-empty-text span{display:block}
-.letters-empty-highlight{color:var(--gold-light);font-weight:600}
-.bday-footer-note{text-align:center;margin-top:32px;opacity:.3;font-size:.7rem}
-
-/* ========== FORM MODAL ========== */
-.form-modal{position:fixed;inset:0;z-index:9900;background:rgba(0,0,0,.7);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);display:flex;align-items:center;justify-content:center;padding:20px;opacity:0;pointer-events:none;transition:opacity .3s}
-.form-modal.open{opacity:1;pointer-events:auto}
-.form-modal-box{width:100%;max-width:420px;background:#0a0a08;border:1px solid rgba(212,175,55,.2);border-radius:var(--r);padding:28px 24px;box-shadow:0 24px 64px rgba(0,0,0,.6),0 0 40px rgba(212,175,55,.08);transform:translateY(20px) scale(.95);transition:transform .35s cubic-bezier(.16,1,.3,1);position:relative;overflow:hidden}
-.form-modal.open .form-modal-box{transform:translateY(0) scale(1)}
-.form-modal-box::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,transparent,var(--gold),transparent)}
-.form-modal-close{position:absolute;top:14px;right:14px;width:32px;height:32px;border-radius:50%;background:rgba(212,175,55,.06);border:1px solid rgba(212,175,55,.1);color:var(--gold-light);font-size:1rem;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .3s}
-.form-modal-close:hover{background:rgba(212,175,55,.15);border-color:rgba(212,175,55,.3)}
-.form-modal-title{font-family:'Space Grotesk',sans-serif;font-size:1.15rem;font-weight:700;color:var(--gold-light);margin-bottom:4px}
-.form-modal-sub{font-size:.78rem;color:var(--text-dim);margin-bottom:22px;line-height:1.5}
-.forum-field{margin-bottom:16px}
-.forum-field:last-of-type{margin-bottom:22px}
-.forum-label{display:block;font-size:.72rem;font-weight:700;letter-spacing:.5px;text-transform:uppercase;color:rgba(255,255,255,.4);margin-bottom:6px}
-.forum-input,.forum-textarea{width:100%;padding:11px 16px;border-radius:10px;background:rgba(18,16,12,.8);border:1px solid rgba(212,175,55,.1);color:var(--text);font-family:'Inter',sans-serif;font-size:.88rem;outline:none;transition:border-color .3s,box-shadow .3s}
-.forum-input:focus,.forum-textarea:focus{border-color:rgba(212,175,55,.35);box-shadow:0 0 0 3px rgba(212,175,55,.08)}
-.forum-input::placeholder,.forum-textarea::placeholder{color:rgba(255,255,255,.2)}
-.forum-textarea{min-height:100px;resize:vertical;line-height:1.6}
-.forum-char-count{text-align:right;font-size:.6rem;color:rgba(255,255,255,.2);margin-top:4px}
-.forum-submit{width:100%;padding:13px;border-radius:12px;background:linear-gradient(135deg,var(--gold),var(--gold-dark));color:#050505;font-family:'Inter',sans-serif;font-size:.9rem;font-weight:700;border:none;cursor:pointer;transition:all .3s;box-shadow:0 4px 16px rgba(212,175,55,.25)}
-.forum-submit:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(212,175,55,.35)}
-
-/* ========== REG MODAL ========== */
-.reg-modal{position:fixed;inset:0;z-index:9900;background:rgba(0,0,0,.7);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);display:flex;align-items:center;justify-content:center;padding:20px;opacity:0;pointer-events:none;transition:opacity .3s}
-.reg-modal.open{opacity:1;pointer-events:auto}
-.reg-modal-box{width:100%;max-width:440px;background:#0a0a08;border:1px solid rgba(212,175,55,.2);border-radius:var(--r);padding:28px 24px;box-shadow:0 24px 64px rgba(0,0,0,.6),0 0 40px rgba(212,175,55,.08);transform:translateY(20px) scale(.95);transition:transform .35s cubic-bezier(.16,1,.3,1);position:relative;overflow:hidden}
-.reg-modal.open .reg-modal-box{transform:translateY(0) scale(1)}
-.reg-modal-box::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,transparent,var(--gold),transparent)}
-.reg-modal-close{position:absolute;top:14px;right:14px;width:32px;height:32px;border-radius:50%;background:rgba(212,175,55,.06);border:1px solid rgba(212,175,55,.1);color:var(--gold-light);font-size:1rem;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .3s}
-.reg-modal-close:hover{background:rgba(212,175,55,.15);border-color:rgba(212,175,55,.3)}
-.reg-modal-title{font-family:'Space Grotesk',sans-serif;font-size:1.15rem;font-weight:700;color:var(--gold-light);margin-bottom:4px}
-.reg-modal-sub{font-size:.78rem;color:var(--text-dim);margin-bottom:22px;line-height:1.5}
-
-/* ========== RESPONSIVE ========== */
-@media(max-width:768px){
-    .burger{display:flex}
-    .nav-links{display:none!important}
-    .hero-cinema-content{padding:90px 24px 32px;margin-left:0}
-    .profile-poke-grid{grid-template-columns:1fr;justify-items:center;text-align:center}
-    .profile-socials{justify-content:center}
-    .ticket-grid{grid-template-columns:1fr}
-    .ticket-top{flex-direction:column}
-    .ticket-date-block{flex-direction:row;gap:8px;min-width:unset;border-right:none;border-bottom:1px dashed rgba(212,175,55,.15);padding:10px 12px}
-    .ticket-date-block::after{right:-6px;top:auto;bottom:-6px;left:auto}
-    .ticket-date-block::before{right:auto;left:-6px;top:auto;bottom:-6px}
-    .cat-summary{grid-template-columns:repeat(2,1fr)}
-    .fb-stats{grid-template-columns:repeat(2,1fr)}
-    .fb-banner-inner{flex-direction:column;text-align:center;gap:16px}
-    .gal-folders-grid{grid-template-columns:repeat(2,1fr);gap:10px}
-    .gal-masonry{grid-template-columns:repeat(2,1fr)}
-    .gal-folder-arrow{display:none}
-    .sticky-note{width:100%}
-    .video-grid{grid-template-columns:repeat(2,1fr)}
-    .letters-masonry{grid-template-columns:repeat(2,1fr);gap:12px}
-    .spotify-embed-wrap iframe{height:352px}
-    .info-row{flex-wrap:wrap;gap:6px}
-    .info-label{min-width:110px}
-}
-@media(max-width:480px){
-    .hero-cinema-name{font-size:2.2rem}
-    .gal-folders-grid{grid-template-columns:1fr}
-    .video-grid{grid-template-columns:1fr}
-    .letters-masonry{grid-template-columns:repeat(2,1fr);gap:10px}
-    .letter-card{padding:16px 12px 12px}
-    .letter-card::before{width:24px;height:14px;top:-7px}
-    .spotify-embed-wrap iframe{height:352px}
-    .lightbox-content{padding:50px 8px 30px}
-    .lightbox-content img{max-width:98vw;border-radius:8px}
-    .lb-nav{width:36px;height:36px}
-    .lb-prev{left:4px}
-    .lb-next{right:4px}
-    .info-row{gap:4px}
-    .info-label{min-width:unset;width:100%;font-size:.72rem;opacity:.6}
-    .info-value{width:100%;padding-left:34px}
-    .hashtag-desc{margin-left:0;width:100%;padding-left:0}
-    .fb-social-item-handle{max-width:120px}
-}
-@media(max-width:360px){
-    .letters-masonry{grid-template-columns:1fr}
-    .cat-summary{grid-template-columns:1fr 1fr;gap:8px}
-    .fb-stats{grid-template-columns:1fr 1fr;gap:8px}
-    .hero-cinema-name{font-size:1.8rem}
-    .hero-cinema-sub{font-size:.9rem}
-    .hcs-pill{padding:6px 10px;font-size:.7rem}
-    .hero-cinema-actions{flex-direction:column}
-    .hero-cinema-actions .btn{width:100%;justify-content:center}
-    .bday-forum-btn{padding:12px 20px;font-size:.82rem}
-    .bday-content{padding:50px 12px 24px}
-    .fb-banner{padding:24px 16px}
-    .sec-pad{padding:32px 16px 24px}
-    .gal-masonry{grid-template-columns:1fr 1fr;gap:8px}
-    .video-grid{grid-template-columns:1fr}
-    .cork-board{padding:28px 12px 16px;gap:16px}
-}
-@media(hover:none){
-    .pokecard{transform:none!important;transition:none!important}
-    .pokecard:hover .pokecard-art-wrap img{transform:none!important}
-    .pokecard-holo,.pokecard-sparkle,.pokecard-glow{display:none}
-    .gal-item::before{display:none}
-    .gal-item:hover .gal-item-img-wrap img{transform:none!important}
-    .fb-logo-glow{animation:none}
-}
-@media(max-height:500px) and (orientation:landscape){
-    .hero-cinema{height:auto;min-height:100svh;padding:60px 0 20px}
-    .hero-cinema-content{padding:60px 24px 20px}
-    .bday-content{min-height:auto;padding:40px 16px 20px}
-    .bday-timer{gap:4px}
-}
-@media(min-width:1200px){
-    .hero-cinema-content{margin-left:8%;max-width:580px}
-    .sec-pad{max-width:920px}
-}
-</style>
 
 <body>
-<!-- Intro -->
-<div class="intro-overlay" id="introOverlay"><div class="intro-card"><span>🔥</span></div></div>
 
-<!-- Mobile Menu -->
-<div class="mob-overlay" id="mobOverlay"></div>
-<div class="mob-menu" id="mobMenu">
-    <div class="mob-menu-header">
-        <div class="mob-menu-brand-icon"><img src="Ralyne/2.jpg" alt="R"></div>
-        <div class="mob-menu-brand"><span class="lib">Lib</span><span class="raly">Raly</span></div>
+    <div class="intro-overlay" id="introOverlay">
+        <div class="intro-card"><span>🔥</span></div>
     </div>
-    <div style="padding:12px 10px;flex:1">
-        <a class="mob-menu-link" data-view="view-home"><span class="dot"></span>Home</a>
-        <a class="mob-menu-link" data-view="view-archive"><span class="dot" style="background:var(--gold-dark)"></span>Archive</a>
-        <div class="mob-dropdown" id="mobSchedDropdown">
-            <button class="mob-dropdown-trigger" onclick="toggleMobDropdown('mobSchedDropdown')">
-                <span class="mob-dropdown-trigger-left"><span class="dot" style="background:var(--lemon)"></span>Schedule</span>
-                <span class="mob-dropdown-arrow"></span>
-            </button>
-            <div class="mob-dropdown-items">
-                <a class="mob-dropdown-item" data-view="view-schedule">📅 Schedule</a>
-                <a class="mob-dropdown-item" data-view="view-reschedule">🔄 Reschedule</a>
-            </div>
+
+    <div class="mob-overlay" id="mobOverlay"></div>
+    <div class="mob-menu" id="mobMenu">
+        <div class="mob-menu-header">
+            <div class="mob-menu-brand-icon"><img src="Ralyne/2.jpg" alt="R"></div>
+            <div class="mob-menu-brand"><span class="lib">Lib</span><span class="raly">Raly</span></div>
         </div>
-        <div class="mob-dropdown" id="mobGalleryDropdown">
-            <button class="mob-dropdown-trigger" onclick="toggleMobDropdown('mobGalleryDropdown')">
-                <span class="mob-dropdown-trigger-left"><span class="dot" style="background:var(--gold)"></span>Gallery</span>
-                <span class="mob-dropdown-arrow"></span>
-            </button>
-            <div class="mob-dropdown-items">
-                <a class="mob-dropdown-item" data-view="view-gallery-ralyne">📸 Ralyne</a>
-                <a class="mob-dropdown-item" data-view="view-gallery-ralvandra">💜 Ralvandra</a>
+        <div style="padding:12px 10px;flex:1">
+            <a class="mob-menu-link" data-view="view-home"><span class="dot"></span>Home</a>
+            <a class="mob-menu-link" data-view="view-archive"><span class="dot"
+                    style="background:var(--gold-dark)"></span>Archive</a>
+            <div class="mob-dropdown" id="mobSchedDropdown">
+                <button class="mob-dropdown-trigger" onclick="toggleMobDropdown('mobSchedDropdown')">
+                    <span class="mob-dropdown-trigger-left"><span class="dot"
+                            style="background:var(--lemon)"></span>Schedule</span>
+                    <span class="mob-dropdown-arrow"></span>
+                </button>
+                <div class="mob-dropdown-items">
+                    <a class="mob-dropdown-item" data-view="view-schedule">📅 Schedule</a>
+                    <a class="mob-dropdown-item" data-view="view-reschedule">🔄 Reschedule</a>
+                </div>
             </div>
+            <div class="mob-dropdown" id="mobGalleryDropdown">
+                <button class="mob-dropdown-trigger" onclick="toggleMobDropdown('mobGalleryDropdown')">
+                    <span class="mob-dropdown-trigger-left"><span class="dot"
+                            style="background:var(--gold)"></span>Gallery</span>
+                    <span class="mob-dropdown-arrow"></span>
+                </button>
+                <div class="mob-dropdown-items">
+                    <a class="mob-dropdown-item" data-view="view-gallery-ralyne">📸 Ralyne</a>
+                    <a class="mob-dropdown-item" data-view="view-gallery-ralvandra">💜 Ralvandra</a>
+                </div>
+            </div>
+            <a class="mob-menu-link" data-view="view-nightsky"><span class="dot" style="background:#a78bfa"></span>Night
+                Sky ✨</a>
+            <a class="mob-menu-link" data-view="view-fanbase"><span class="dot"
+                    style="background:#9333ea"></span>Fanbase</a>
+            <a class="mob-menu-link" data-view="view-projects"><span class="dot"
+                    style="background:#eab308"></span>Projects</a>
         </div>
-        <a class="mob-menu-link" data-view="view-fanbase"><span class="dot" style="background:#9333ea"></span>Fanbase</a>
-        <a class="mob-menu-link" data-view="view-projects"><span class="dot" style="background:#eab308"></span>Projects</a>
+        <div class="mob-menu-footer">© 2026 LibRaly Archive</div>
     </div>
-    <div class="mob-menu-footer">© 2026 LibRaly Archive</div>
-</div>
 
-<!-- Nav -->
-<nav class="nav nav-dark" id="nav">
-    <div class="nav-brand" id="navBrand">
-        <div class="nav-brand-icon"><img src="Ralyne/2.jpg" alt="R"></div>
-        <div class="nav-brand-text"><span class="lib">Lib</span><span class="raly">Raly</span></div>
-    </div>
-    <div class="nav-links" id="navLinks">
-        <a class="nav-link active" data-view="view-home">Home</a>
-        <a class="nav-link" data-view="view-archive">Archive</a>
-        <div class="nav-dropdown" id="schedDropdown">
-            <button class="nav-dropdown-trigger" onclick="toggleDropdown(event,'schedDropdown')">Schedule <span class="nav-dropdown-arrow"></span></button>
-            <div class="nav-dropdown-menu">
-                <a class="nav-dropdown-item" data-view="view-schedule"><span class="nav-dropdown-item-dot" style="background:var(--gold)"></span><span class="nav-dropdown-item-label">Schedule</span><span class="nav-dropdown-item-badge badge-gold">Ticket</span></a>
-                <div class="nav-dropdown-divider"></div>
-                <a class="nav-dropdown-item" data-view="view-reschedule"><span class="nav-dropdown-item-dot" style="background:var(--orange)"></span><span class="nav-dropdown-item-label">Reschedule</span><span class="nav-dropdown-item-badge badge-purple">History</span></a>
+    <nav class="nav nav-dark" id="nav">
+        <div class="nav-brand" id="navBrand">
+            <div class="nav-brand-icon"><img src="Ralyne/2.jpg" alt="R"></div>
+            <div class="nav-brand-text"><span class="lib">Lib</span><span class="raly">Raly</span></div>
+        </div>
+        <div class="nav-links" id="navLinks">
+            <a class="nav-link active" data-view="view-home">Home</a>
+            <a class="nav-link" data-view="view-archive">Archive</a>
+            <div class="nav-dropdown" id="schedDropdown">
+                <button class="nav-dropdown-trigger" onclick="toggleDropdown(event,'schedDropdown')">Schedule <span
+                        class="nav-dropdown-arrow"></span></button>
+                <div class="nav-dropdown-menu">
+                    <a class="nav-dropdown-item" data-view="view-schedule"><span class="nav-dropdown-item-dot"
+                            style="background:var(--gold)"></span><span
+                            class="nav-dropdown-item-label">Schedule</span><span
+                            class="nav-dropdown-item-badge badge-gold">Ticket</span></a>
+                    <div class="nav-dropdown-divider"></div>
+                    <a class="nav-dropdown-item" data-view="view-reschedule"><span class="nav-dropdown-item-dot"
+                            style="background:var(--orange)"></span><span
+                            class="nav-dropdown-item-label">Reschedule</span><span
+                            class="nav-dropdown-item-badge badge-purple">History</span></a>
+                </div>
+            </div>
+            <div class="nav-dropdown" id="galleryDropdown">
+                <button class="nav-dropdown-trigger" onclick="toggleDropdown(event,'galleryDropdown')">Gallery <span
+                        class="nav-dropdown-arrow"></span></button>
+                <div class="nav-dropdown-menu">
+                    <a class="nav-dropdown-item" data-view="view-gallery-ralyne"><span class="nav-dropdown-item-dot"
+                            style="background:var(--gold)"></span><span
+                            class="nav-dropdown-item-label">Ralyne</span><span
+                            class="nav-dropdown-item-badge badge-gold">Gen 14</span></a>
+                    <div class="nav-dropdown-divider"></div>
+                    <a class="nav-dropdown-item" data-view="view-gallery-ralvandra"><span class="nav-dropdown-item-dot"
+                            style="background:var(--purple)"></span><span
+                            class="nav-dropdown-item-label">Ralvandra</span><span
+                            class="nav-dropdown-item-badge badge-purple">Ship</span></a>
+                </div>
+            </div>
+            <a class="nav-link" data-view="view-nightsky">Night Sky ✨</a>
+            <a class="nav-link" data-view="view-fanbase">Fanbase</a>
+            <a class="nav-link" data-view="view-projects">Projects</a>
+        </div>
+        <button class="burger" id="burger" aria-label="Menu"><span></span><span></span><span></span></button>
+    </nav>
+
+    <div class="view-container">
+
+        <div id="view-home" class="view active">
+            <section class="hero-cinema" id="hero" style="height:100vh;min-height:100vh;overflow:hidden;">
+                <div class="hero-slideshow" id="heroSlideshow">
+                    <!-- FIX: Hanya slide pertama yang punya active-slide -->
+                    <div class="hero-slide active-slide" style="background-image:url('Ralyne/1.jpg')"></div>
+                    <div class="hero-slide" style="background-image:url('Ralyne/4.jpg')"></div>
+                    <div class="hero-slide" style="background-image:url('Ralyne/5.jpg')"></div>
+                </div>
+                <div class="hero-overlay"></div>
+                <div class="hero-cinema-content">
+                    <div class="hero-cinema-label hero-fade hero-d1 rv"><span class="hero-cinema-label-dot"></span>
+                        JKT48 Gen 14 Trainee</div>
+                    <h1 class="hero-cinema-name hero-fade hero-d2 rv">Ralyne</h1>
+                    <p class="hero-cinema-sub hero-fade hero-d3 rv">Van Irawan</p>
+                    <div class="hero-cinema-line hero-fade hero-d4 rv"></div>
+                    <div class="hero-info-section hero-fade hero-d5 rv">
+                        <div class="hero-info-item"><span class="hero-info-diamond">✦</span> JKT48 Gen 14</div>
+                        <div class="hero-info-item"><span class="hero-info-diamond">✦</span> Idol Archive</div>
+                        <div class="hero-info-item"><span class="hero-info-diamond">✦</span> Since 2025</div>
+                    </div>
+                    <div class="jiko-box hero-fade hero-d6 rv">
+                        <p class="jiko-text-wrap"><span id="jikoText"></span><span class="jiko-cursor"></span></p>
+                    </div>
+                    <div class="hero-cinema-actions hero-fade hero-d7 rv">
+                        <button onclick="switchView('view-archive')" class="btn btn-mint">🍃 Enter Archive</button>
+                        <button onclick="switchView('view-schedule')" class="btn btn-glass">📅 Schedule</button>
+                    </div>
+                </div>
+                <!-- FIX: Tambah dot ketiga agar sesuai jumlah slide -->
+                <div class="slide-dots" id="slideDots">
+                    <div class="slide-dot active-dot"></div>
+                    <div class="slide-dot"></div>
+                    <div class="slide-dot"></div>
+                </div>
+            </section>
+        </div>
+
+        <div id="view-schedule" class="view">
+            <div class="chapter">
+                <div class="chapter-label rv">Schedule</div>
+                <h2 class="chapter-title grad rv">Jadwal</h2>
+                <p class="chapter-desc rv">Upcoming show, booking tiket, dan unit song</p>
+            </div>
+            <div class="shelf"></div>
+            <div class="sec-pad">
+                <div class="sec-header rv">
+                    <div class="sec-title">📅 Schedule yang Akan Datang</div>
+                    <div class="sec-sub">Jadwal show & live Ralyne ke depan</div>
+                </div>
+                <div class="upcoming-list rv" id="upcomingList"></div>
+                <div class="sec-divider"></div>
+                <div class="sec-header rv">
+                    <div class="sec-title">🎫 Tiket Booking</div>
+                    <div class="sec-sub">Beli tiket VC, M&G, dan 2-shoot bareng Ralyne</div>
+                </div>
+                <div class="ticket-grid rv" id="ticketGrid"></div>
+                <div class="sec-divider"></div>
+                <div class="sec-header rv">
+                    <div class="sec-title">🎵 Unit Song</div>
+                    <div class="sec-sub">Lagu unit yang dibawakan Ralyne</div>
+                </div>
+                <div id="unitSongContainer" class="rv"></div>
+            </div>
+            <div class="footer">
+                <div class="footer-brand"><span class="lib">Lib</span><span class="raly">Raly</span></div>
+                <div class="footer-copy">© 2026 LibRaly</div>
             </div>
         </div>
-        <div class="nav-dropdown" id="galleryDropdown">
-            <button class="nav-dropdown-trigger" onclick="toggleDropdown(event,'galleryDropdown')">Gallery <span class="nav-dropdown-arrow"></span></button>
-            <div class="nav-dropdown-menu">
-                <a class="nav-dropdown-item" data-view="view-gallery-ralyne"><span class="nav-dropdown-item-dot" style="background:var(--gold)"></span><span class="nav-dropdown-item-label">Ralyne</span><span class="nav-dropdown-item-badge badge-gold">Gen 14</span></a>
-                <div class="nav-dropdown-divider"></div>
-                <a class="nav-dropdown-item" data-view="view-gallery-ralvandra"><span class="nav-dropdown-item-dot" style="background:var(--purple)"></span><span class="nav-dropdown-item-label">Ralvandra</span><span class="nav-dropdown-item-badge badge-purple">Ship</span></a>
-            </div>
-        </div>
-        <a class="nav-link" data-view="view-fanbase">Fanbase</a>
-        <a class="nav-link" data-view="view-projects">Projects</a>
-    </div>
-    <button class="burger" id="burger" aria-label="Menu"><span></span><span></span><span></span></button>
-</nav>
 
-<!-- ========== VIEWS ========== -->
-<div class="view-container">
-
-<!-- HOME -->
-<div id="view-home" class="view active">
-    <section class="hero-cinema" id="hero">
-        <div class="hero-slideshow" id="heroSlideshow">
-            <div class="hero-slide active-slide" style="background-image:url('Ralyne/1.jpg')"></div>
-            <div class="hero-slide" style="background-image:url('https://picsum.photos/seed/raly-c3/1200/800.jpg')"></div>
-        </div>
-        <div class="hero-overlay"></div>
-        <div class="hero-cinema-content">
-            <div class="hero-cinema-label rv"><span class="hero-cinema-label-dot"></span> JKT48 Gen 14 Trainee</div>
-            <h1 class="hero-cinema-name rv">Ralyne</h1>
-            <p class="hero-cinema-sub rv">Van Irawan</p>
-            <div class="hero-cinema-line rv"></div>
-            <div class="jiko-box rv"><p class="jiko-text-wrap"><span id="jikoText"></span><span class="jiko-cursor"></span></p></div>
-            <div class="hero-cinema-stats rv">
-                <div class="hcs-pill"><span class="hcs-icon">🌟</span><span class="hcs-val">Gen 14</span><span class="hcs-label">Trainee</span></div>
-                <div class="hcs-pill"><span class="hcs-icon">🎵</span><span class="hcs-val" id="songC">0</span><span class="hcs-label">Unit Song</span></div>
-                <div class="hcs-pill"><span class="hcs-icon">🎭</span><span class="hcs-val" id="showC">0</span><span class="hcs-label">Shows</span></div>
+        <div id="view-archive" class="view">
+            <div class="chapter">
+                <div class="chapter-label rv">Archive</div>
+                <h2 class="chapter-title rv">Profil & Biodata</h2>
+                <p class="chapter-desc rv">Kenali lebih dekat sang trainee berbakat</p>
             </div>
-            <div class="hero-cinema-actions rv">
-                <button onclick="switchView('view-archive')" class="btn btn-mint">🍃 Enter Archive</button>
-                <button onclick="switchView('view-schedule')" class="btn btn-glass">📅 Jadwal</button>
-            </div>
-            <div class="hero-peek rv" id="heroPeek"><span class="hero-peek-label">Next</span><span class="hero-peek-info">Memuat...</span></div>
-        </div>
-        <div class="slide-dots" id="slideDots"><div class="slide-dot active-dot"></div><div class="slide-dot"></div></div>
-    </section>
-</div>
-
-<!-- ARCHIVE -->
-<div id="view-archive" class="view">
-    <div class="chapter"><div class="chapter-label rv">Archive</div><h2 class="chapter-title rv">Profil & Biodata</h2><p class="chapter-desc rv">Kenali lebih dekat sang trainee berbakat</p></div>
-    <div class="shelf"></div>
-    <div class="sec-pad">
-        <div class="profile-poke-grid rv">
-            <div class="pokecard-scene">
-                <div class="pokecard" id="pokecard">
-                    <div class="pokecard-glow"></div>
-                    <div class="pokecard-border"><div class="pokecard-inner">
-                        <div class="pokecard-holo" id="pokecardHolo"></div>
-                        <div class="pokecard-sparkle"></div>
-                        <div class="pokecard-header"><span class="pokecard-name">Ralyne</span><div class="pokecard-hp"><span class="pokecard-hp-label">HP</span><span class="pokecard-hp-val">48</span></div></div>
-                        <div class="pokecard-art-wrap" id="pokecardArt" onclick="openBirthday()"><img src="Ralyne/1.jpg" alt="Ralyne"/><div class="pokecard-stage"><span class="pokecard-stage-dot"></span>Basic</div><div class="pokecard-type-badge">✨</div></div>
-                        <div class="pokecard-body">
-                            <div class="pokecard-attack"><div class="pokecard-attack-icons">✨✨</div><span class="pokecard-attack-name">Idol Sparkle</span><span class="pokecard-attack-dmg">50</span></div>
-                            <div class="pokecard-attack-desc">Flip a coin. If heads, semua penonton tersenyum — dan Ralyne naik stage dengan cahaya emas.</div>
-                            <div class="pokecard-divider"></div>
-                            <div class="pokecard-attack"><div class="pokecard-attack-icons">✨✨✨</div><span class="pokecard-attack-name">Shining Dream</span><span class="pokecard-attack-dmg">80+</span></div>
-                            <div class="pokecard-attack-desc">Jika Ralyne memiliki energi Gen 14 yang terpasang, serangan ini +30 damage tambahan.</div>
+            <div class="shelf"></div>
+            <div class="sec-pad">
+                <div class="profile-poke-grid rv">
+                    <div class="pokecard-scene">
+                        <div class="pokecard" id="pokecard">
+                            <div class="pokecard-glow"></div>
+                            <div class="pokecard-border">
+                                <div class="pokecard-inner">
+                                    <div class="pokecard-holo" id="pokecardHolo"></div>
+                                    <div class="pokecard-sparkle"></div>
+                                    <div class="pokecard-header"><span class="pokecard-name">Ralyne</span>
+                                        <div class="pokecard-hp"><span class="pokecard-hp-label">HP</span><span
+                                                class="pokecard-hp-val">48</span></div>
+                                    </div>
+                                    <div class="pokecard-art-wrap" id="pokecardArt" onclick="openBirthday()"><img
+                                            src="Ralyne/1.jpg" alt="Ralyne" />
+                                        <div class="pokecard-stage"><span class="pokecard-stage-dot"></span>Basic</div>
+                                        <div class="pokecard-type-badge">✨</div>
+                                    </div>
+                                    <div class="pokecard-body">
+                                        <div class="pokecard-attack">
+                                            <div class="pokecard-attack-icons">✨✨</div><span
+                                                class="pokecard-attack-name">Idol Sparkle</span><span
+                                                class="pokecard-attack-dmg">50</span>
+                                        </div>
+                                        <div class="pokecard-attack-desc">Flip a coin. If heads, semua penonton
+                                            tersenyum - dan Ralyne naik stage dengan cahaya emas.</div>
+                                        <div class="pokecard-divider"></div>
+                                        <div class="pokecard-attack">
+                                            <div class="pokecard-attack-icons">✨✨✨</div><span
+                                                class="pokecard-attack-name">Shining Dream</span><span
+                                                class="pokecard-attack-dmg">80+</span>
+                                        </div>
+                                        <div class="pokecard-attack-desc">Jika Ralyne memiliki energi Gen 14 yang
+                                            terpasang, serangan ini +30 damage tambahan.</div>
+                                    </div>
+                                    <div class="pokecard-stats">
+                                        <div class="pokecard-stat"><span class="pokecard-stat-label">VOC</span>
+                                            <div class="pokecard-stat-bar-wrap">
+                                                <div class="pokecard-stat-bar" data-width="72"></div>
+                                            </div><span class="pokecard-stat-val">72</span>
+                                        </div>
+                                        <div class="pokecard-stat"><span class="pokecard-stat-label">DAN</span>
+                                            <div class="pokecard-stat-bar-wrap">
+                                                <div class="pokecard-stat-bar" data-width="78"></div>
+                                            </div><span class="pokecard-stat-val">78</span>
+                                        </div>
+                                        <div class="pokecard-stat"><span class="pokecard-stat-label">VAR</span>
+                                            <div class="pokecard-stat-bar-wrap">
+                                                <div class="pokecard-stat-bar" data-width="65"></div>
+                                            </div><span class="pokecard-stat-val">65</span>
+                                        </div>
+                                        <div class="pokecard-stat"><span class="pokecard-stat-label">CHA</span>
+                                            <div class="pokecard-stat-bar-wrap">
+                                                <div class="pokecard-stat-bar" data-width="85"></div>
+                                            </div><span class="pokecard-stat-val">85</span>
+                                        </div>
+                                    </div>
+                                    <div class="pokecard-footer">
+                                        <div class="pokecard-flavor">"Ready Set Go! Game Play Aku Akan Menghiburmu"
+                                        </div>
+                                        <div class="pokecard-set-info">
+                                            <div class="pokecard-set-symbol">🍃</div>
+                                            <div class="pokecard-set-number">014/048</div>
+                                            <div class="pokecard-rarity"><span class="pokecard-rarity-dot"></span><span
+                                                    class="pokecard-rarity-dot"></span><span
+                                                    class="pokecard-rarity-dot"></span></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
-                        <div class="pokecard-stats">
-                            <div class="pokecard-stat"><span class="pokecard-stat-label">VOC</span><div class="pokecard-stat-bar-wrap"><div class="pokecard-stat-bar" data-width="72"></div></div><span class="pokecard-stat-val">72</span></div>
-                            <div class="pokecard-stat"><span class="pokecard-stat-label">DAN</span><div class="pokecard-stat-bar-wrap"><div class="pokecard-stat-bar" data-width="78"></div></div><span class="pokecard-stat-val">78</span></div>
-                            <div class="pokecard-stat"><span class="pokecard-stat-label">VAR</span><div class="pokecard-stat-bar-wrap"><div class="pokecard-stat-bar" data-width="65"></div></div><span class="pokecard-stat-val">65</span></div>
-                            <div class="pokecard-stat"><span class="pokecard-stat-label">CHA</span><div class="pokecard-stat-bar-wrap"><div class="pokecard-stat-bar" data-width="85"></div></div><span class="pokecard-stat-val">85</span></div>
+                    </div>
+                    <div class="profile-info">
+                        <div class="profile-name">Ralyne Van Irawan</div>
+                        <div class="biodata-table">
+                            <div class="info-row"><span class="info-icon">✨</span><span class="info-label">Nama
+                                    Lengkap</span><span class="info-value">Ralyne Van Irawan</span></div>
+                            <div class="info-row"><span class="info-icon">💬</span><span class="info-label">Nama
+                                    Panggilan</span><span class="info-value">Ralyne</span></div>
+                            <div class="info-row"><span class="info-icon">🎂</span><span class="info-label">Tanggal
+                                    Lahir</span><span class="info-value">15 Oktober 2011</span></div>
+                            <div class="info-row"><span class="info-icon">📏</span><span class="info-label">Tinggi
+                                    Badan</span><span class="info-value">152 cm</span></div>
+                            <div class="info-row"><span class="info-icon">🎨</span><span
+                                    class="info-label">Hobi</span><span class="info-value">Memasak, Hairstyling</span>
+                            </div>
+                            <div class="info-row"><span class="info-icon">🎭</span><span
+                                    class="info-label">Tim</span><span class="info-value"
+                                    style="color:var(--gold-light);font-weight:600">Trainee</span></div>
                         </div>
-                        <div class="pokecard-footer">
-                            <div class="pokecard-flavor">"Ready Set Go! Game Play Aku Akan Menghiburmu"</div>
-                            <div class="pokecard-set-info"><div class="pokecard-set-symbol">🍃</div><div class="pokecard-set-number">014/048</div><div class="pokecard-rarity"><span class="pokecard-rarity-dot"></span><span class="pokecard-rarity-dot"></span><span class="pokecard-rarity-dot"></span></div></div>
+                        <div class="profile-socials">
+                            <a href="https://www.instagram.com/jkt48.u16?igsh=MXMyY3hqeHlvZmVzOQ==" title="Instagram"
+                                target="_blank"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18"
+                                    viewBox="0 0 24 24" fill="currentColor">
+                                    <path
+                                        d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.79-4 4-4s4 1.791 4 4c0 2.209-1.791 4-4 4zm6.406-11.845a1.44 1.44 0 1 0 0 2.881 1.44 1.44 0 0 0 0-2.881z" />
+                                </svg></a>
+                            <a href="https://www.tiktok.com/@jkt48.u16?_r=1&_t=ZS-96DkqYQXnvg" title="TikTok"
+                                target="_blank"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18"
+                                    viewBox="0 0 24 24" fill="currentColor">
+                                    <path
+                                        d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-2.88 2.5 2.89 2.89 0 0 1-2.88-2.88c.3 0 .58.05.85.12V9.01a6.33 6.33 0 0 0-.85-.06 6.34 6.34 0 0 0-6.34 6.34 6.34 6.34 0 0 0 6.34 6.34 6.34 6.34 0 0 0 6.34-6.34V8.75a8.18 8.18 0 0 0 4.76 1.52V6.84a4.84 4.84 0 0 1-1-.15z" />
+                                </svg></a>
+                            <a href="https://idn.onelink.me/VKUf/RalyneJKT48" title="IDN" target="_blank"
+                                class="social-idn"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18"
+                                    viewBox="0 0 24 24"><text x="12" y="17" font-family="Arial,Helvetica,sans-serif"
+                                        font-size="11" font-weight="900" fill="currentColor" text-anchor="middle"
+                                        letter-spacing="0.5">IDN</text></svg></a>
+                            <a href="https://www.showroom-live.com/r/JKT48_Ralyne" title="Showroom" target="_blank"
+                                class="social-showroom"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18"
+                                    viewBox="0 0 24 24"><text x="12" y="17" font-family="Arial,Helvetica,sans-serif"
+                                        font-size="12" font-weight="900" fill="currentColor"
+                                        text-anchor="middle">SR</text></svg></a>
                         </div>
-                    </div></div>
+                    </div>
+                </div>
+
+                <div class="rv" style="margin-top:48px">
+                    <h3
+                        style="font-family:'Space Grotesk',sans-serif;font-size:1.2rem;font-weight:700;margin-bottom:4px;color:var(--gold-light)">
+                        💡 Fun Facts <span class="hashtag-count-badge" id="funfactCountBadge">0</span></h3>
+                    <p style="font-size:.8rem;color:var(--text-dim);margin-bottom:4px">Sisi unik dan random dari Ralyne
+                    </p>
+                    <div class="funfact-scroll-fade" id="funfactFadeWrap">
+                        <div class="cork-board funfact-scroll-wrap" id="funfactContainer"></div>
+                    </div>
+                </div>
+
+                <div class="video-section rv">
+                    <div class="video-section-header">
+                        <h3 class="video-section-title">🎬 Video Archive</h3>
+                        <p class="video-section-sub">Kumpulan video perkenalan hingga penampilan panggung</p>
+                    </div>
+                    <div id="videoPreviewContainer"></div>
+                </div>
+
+                <div class="spotify-section rv">
+                    <div class="spotify-section-header">
+                        <h3 class="spotify-section-title">🎵 Playlist</h3>
+                        <p class="spotify-section-sub">Lagu yang relate sama Ralyne & Ralvandra</p>
+                    </div>
+                    <div class="spotify-embed-wrap">
+                        <div class="spotify-embed-inner"><iframe style="border-radius:15px"
+                                src="https://open.spotify.com/embed/playlist/6JE0KRC2jf8qlX7y3VfFK7?utm_source=generator&theme=0"
+                                width="100%" height="352" frameBorder="0" allowfullscreen=""
+                                allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
+                                loading="lazy"></iframe></div>
+                    </div>
+                </div>
+
+                <div class="hashtag-section rv">
+                    <div class="video-section-header">
+                        <h3 class="video-section-title">🏷️ Hashtag <span class="hashtag-count-badge"
+                                id="hashtagCountBadge">0</span></h3>
+                        <p class="video-section-sub">Hashtag yang digunakan untuk Ralyne</p>
+                    </div>
+                    <div class="hashtag-scroll-fade" id="hashtagFadeWrap">
+                        <div class="biodata-table hashtag-scroll-wrap" id="hashtagPreviewContainer"></div>
+                    </div>
                 </div>
             </div>
-            <div class="profile-info">
-                <div class="profile-name">Ralyne Van Irawan</div>
-                <div class="biodata-table">
-                    <div class="info-row"><span class="info-icon">✨</span><span class="info-label">Nama Lengkap</span><span class="info-value">Ralyne Van Irawan</span></div>
-                    <div class="info-row"><span class="info-icon">💬</span><span class="info-label">Nama Panggilan</span><span class="info-value">Ralyne</span></div>
-                    <div class="info-row"><span class="info-icon">🎂</span><span class="info-label">Tanggal Lahir</span><span class="info-value">15 Oktober 2011</span></div>
-                    <div class="info-row"><span class="info-icon">📏</span><span class="info-label">Tinggi Badan</span><span class="info-value">152 cm</span></div>
-                    <div class="info-row"><span class="info-icon">🎨</span><span class="info-label">Hobi</span><span class="info-value">Memasak, Hairstyling</span></div>
-                    <div class="info-row"><span class="info-icon">🎭</span><span class="info-label">Tim</span><span class="info-value" style="color:var(--gold-light);font-weight:600">Trainee</span></div>
-                </div>
-                <div class="profile-socials">
-                    <a href="https://www.instagram.com/jkt48.u16?igsh=MXMyY3hqeHlvZmVzOQ==" title="Instagram" target="_blank"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg></a>
-                    <a href="https://www.tiktok.com/@jkt48.u16?_r=1&_t=ZS-96DkqYQXnvg" title="TikTok" target="_blank"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-2.88 2.5 2.89 2.89 0 0 1-2.88-2.88 2.89 2.89 0 0 1 2.88-2.88c.3 0 .58.05.85.12V9.01a6.33 6.33 0 0 0-.85-.06 6.34 6.34 0 0 0-6.34 6.34 6.34 6.34 0 0 0 6.34 6.34 6.34 6.34 0 0 0 6.34-6.34V8.75a8.18 8.18 0 0 0 4.76 1.52V6.84a4.84 4.84 0 0 1-1-.15z"/></svg></a>
-                </div>
+            <div class="footer">
+                <div class="footer-brand"><span class="lib">Lib</span><span class="raly">Raly</span></div>
+                <div class="footer-sub">The Ralynee Archive • Unofficial Fanbase</div>
+                <div class="footer-copy">© 2026 LibRaly</div>
             </div>
         </div>
 
-        <!-- Fun Facts -->
-        <div class="rv" style="margin-top:48px">
-            <h3 style="font-family:'Space Grotesk',sans-serif;font-size:1.2rem;font-weight:700;margin-bottom:4px;color:var(--gold-light)">💡 Fun Facts</h3>
-            <p style="font-size:.8rem;color:var(--text-dim);margin-bottom:4px">Sisi unik dan random dari Ralyne</p>
-            <div class="cork-board" id="funfactContainer"></div>
-            <div id="funfactPreviewLoadmore" class="loadmore-wrap rv" style="display:none"><button onclick="switchView('view-funfacts')" class="loadmore-btn">Lihat Fakta Lainnya →</button></div>
-        </div>
-
-        <!-- Video -->
-        <div class="video-section rv">
-            <div class="video-section-header">
-                <h3 class="video-section-title">🎬 Video Archive</h3>
-                <p class="video-section-sub">Kumpulan video perkenalan hingga penampilan panggung</p>
+        <div id="view-reschedule" class="view">
+            <div class="chapter">
+                <div class="chapter-label label-orange rv">Reschedule</div>
+                <h2 class="chapter-title grad-orange rv">Reschedule</h2>
+                <p class="chapter-desc rv">Riwayat aktivitas perform</p>
             </div>
-            <div id="videoPreviewContainer"></div>
-        </div>
-
-        <!-- Spotify -->
-        <div class="spotify-section rv">
-            <div class="spotify-section-header">
-                <h3 class="spotify-section-title">🎵 Playlist</h3>
-                <p class="spotify-section-sub">Lagu yang relate sama Ralyne & Ralvandra</p>
-            </div>
-            <div class="spotify-embed-wrap">
-                <div class="spotify-embed-inner"><iframe style="border-radius:15px" src="https://open.spotify.com/embed/playlist/6JE0KRC2jf8qlX7y3VfFK7?utm_source=generator&theme=0" width="100%" height="352" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe></div>
+            <div class="shelf shelf-orange"></div>
+            <div class="sec-pad" id="rescheduleContainer"></div>
+            <div class="footer">
+                <div class="footer-brand"><span class="lib">Lib</span><span class="raly">Raly</span></div>
+                <div class="footer-copy">© 2026 LibRaly</div>
             </div>
         </div>
 
-        <!-- Hashtag -->
-        <div class="hashtag-section rv">
-            <div class="video-section-header">
-                <h3 class="video-section-title">🏷️ Hashtag</h3>
-                <p class="video-section-sub">Hashtag yang sering dikaitkan dengan Ralyne</p>
+        <div id="view-gallery-ralyne" class="view">
+            <div class="chapter">
+                <div class="chapter-label rv">Gallery</div>
+                <h2 class="chapter-title grad rv">Ralyne</h2>
+                <p class="chapter-desc rv">Koleksi foto Ralyne Van Irawan</p>
             </div>
-            <div class="biodata-table" id="hashtagPreviewContainer"></div>
+            <div class="shelf"></div>
+            <div class="sec-pad" id="galRalyneContent"></div>
+            <div class="footer">
+                <div class="footer-brand"><span class="lib">Lib</span><span class="raly">Raly</span></div>
+                <div class="footer-copy">© 2026 LibRaly</div>
+            </div>
         </div>
-    </div>
-    <div class="footer"><div class="footer-brand"><span class="lib">Lib</span><span class="raly">Raly</span></div><div class="footer-sub">The Ralynee Archive • Unofficial Fanbase</div><div class="footer-copy">© 2026 LibRaly — Made with 🍃 by fans, for fans.</div></div>
-</div>
 
-<!-- HASHTAGS FULL -->
-<div id="view-hashtags" class="view">
-    <div class="chapter"><div class="chapter-label rv">Hashtag</div><h2 class="chapter-title grad rv">Koleksi Hashtag</h2></div>
-    <div class="shelf"></div>
-    <div class="sec-pad">
-        <div class="biodata-table" id="hashtagFullContainer"></div>
-        <div style="text-align:center;margin-top:32px" class="rv"><button onclick="switchView('view-archive')" class="btn btn-ghost">← Kembali</button></div>
-    </div>
-    <div class="footer"><div class="footer-brand"><span class="lib">Lib</span><span class="raly">Raly</span></div><div class="footer-copy">© 2026 LibRaly</div></div>
-</div>
+        <div id="view-gallery-ralvandra" class="view">
+            <div class="chapter">
+                <div class="chapter-label label-purple rv">Gallery</div>
+                <h2 class="chapter-title grad-purple rv">Ralvandra</h2>
+                <p class="chapter-desc rv">Koleksi foto moment Ralvandra</p>
+            </div>
+            <div class="shelf shelf-purple"></div>
+            <div class="sec-pad" id="galRalvandraContent"></div>
+            <div class="footer">
+                <div class="footer-brand"><span class="lib">Lib</span><span class="raly">Raly</span></div>
+                <div class="footer-copy">© 2026 LibRaly</div>
+            </div>
+        </div>
 
-<!-- FUNFACTS FULL -->
-<div id="view-funfacts" class="view">
-    <div class="chapter"><div class="chapter-label rv">Deep Dive</div><h2 class="chapter-title grad rv">Fun Facts</h2></div>
-    <div class="shelf"></div>
-    <div class="sec-pad">
-        <div class="cork-board" id="fullFunfactContainer"></div>
-        <div style="text-align:center;margin-top:32px" class="rv"><button onclick="switchView('view-archive')" class="btn btn-ghost">← Kembali</button></div>
-    </div>
-    <div class="footer"><div class="footer-brand"><span class="lib">Lib</span><span class="raly">Raly</span></div><div class="footer-copy">© 2026 LibRaly</div></div>
-</div>
-
-<!-- VIDEOS FULL -->
-<div id="view-videos" class="view">
-    <div class="chapter"><div class="chapter-label rv">Video</div><h2 class="chapter-title grad rv">Koleksi Video</h2></div>
-    <div class="shelf"></div>
-    <div class="sec-pad">
-        <div id="videoFullContainer"></div>
-        <div style="text-align:center;margin-top:32px" class="rv"><button onclick="switchView('view-archive')" class="btn btn-ghost">← Kembali</button></div>
-    </div>
-    <div class="footer"><div class="footer-brand"><span class="lib">Lib</span><span class="raly">Raly</span></div><div class="footer-copy">© 2026 LibRaly</div></div>
-</div>
-
-<!-- SCHEDULE -->
-<div id="view-schedule" class="view">
-    <div class="chapter"><div class="chapter-label rv">Schedule</div><h2 class="chapter-title grad rv">Jadwal</h2><p class="chapter-desc rv">Upcoming show, booking tiket, dan unit song</p></div>
-    <div class="shelf"></div>
-    <div class="sec-pad">
-        <div class="sec-header rv"><div class="sec-title">📅 Schedule yang Akan Datang</div><div class="sec-sub">Jadwal show & live Ralyne ke depan</div></div>
-        <div class="upcoming-list rv" id="upcomingList"></div>
-        <div class="sec-divider"></div>
-        <div class="sec-header rv"><div class="sec-title">🎫 Tiket Booking</div><div class="sec-sub">Beli tiket VC, M&G, dan 2-shoot bareng Ralyne</div></div>
-        <div class="ticket-grid rv" id="ticketGrid"></div>
-        <div class="sec-divider"></div>
-        <div class="sec-header rv"><div class="sec-title">🎵 Unit Song</div><div class="sec-sub">Lagu unit yang dibawakan Ralyne</div></div>
-        <div class="unit-scroll-wrap rv"><div class="unit-scroll-track" id="unitScrollTrack"></div></div>
-    </div>
-    <div class="footer"><div class="footer-brand"><span class="lib">Lib</span><span class="raly">Raly</span></div><div class="footer-copy">© 2026 LibRaly</div></div>
-</div>
-
-<!-- RESCHEDULE -->
-<div id="view-reschedule" class="view">
-    <div class="chapter"><div class="chapter-label label-orange rv">Reschedule</div><h2 class="chapter-title grad-orange rv">Riwayat Show</h2><p class="chapter-desc rv">Klik nama show untuk lihat detail tanggal & unit song</p></div>
-    <div class="shelf shelf-orange"></div>
-    <div class="sec-pad">
-        <div class="sec-header rv"><div class="sec-title sec-title-purple">📊 Ringkasan Kategori</div><div class="sec-sub">Total show yang sudah dilakukan</div></div>
-        <div class="cat-summary rv" id="catSummary"></div>
-        <div class="sec-divider sec-divider-purple"></div>
-        <div id="historySections"></div>
-    </div>
-    <div class="footer"><div class="footer-brand"><span class="lib">Lib</span><span class="raly">Raly</span></div><div class="footer-copy">© 2026 LibRaly</div></div>
-</div>
-
-<!-- GALLERY RALYNE -->
-<div id="view-gallery-ralyne" class="view">
-    <div class="chapter"><div class="chapter-label rv">Gallery</div><h2 class="chapter-title grad rv">Ralyne</h2><p class="chapter-desc rv">Koleksi foto Ralyne Van Irawan</p></div>
-    <div class="shelf"></div>
-    <div class="sec-pad" id="galRalyneContent"></div>
-        <div class="footer"><div class="footer-brand"><span class="lib">Lib</span><span class="raly">Raly</span></div><div class="footer-copy">© 2026 LibRaly</div></div>
-</div>
-
-<!-- GALLERY RALVANDRA -->
-<div id="view-gallery-ralvandra" class="view">
-    <div class="chapter"><div class="chapter-label label-purple rv">Gallery</div><h2 class="chapter-title grad-purple rv">Ralvandra</h2><p class="chapter-desc rv">Koleksi foto moment Ralyne & Vandra bersama</p></div>
-    <div class="shelf shelf-purple"></div>
-    <div class="sec-pad" id="galRalvandraContent"></div>
-    <div class="footer"><div class="footer-brand"><span class="lib">Lib</span><span class="raly">Raly</span></div><div class="footer-copy">© 2026 LibRaly</div></div>
-</div>
-
-<!-- FANBASE -->
-<div id="view-fanbase" class="view">
-    <div class="chapter"><div class="chapter-label rv">Fanbase</div><h2 class="chapter-title rv">Fanbase</h2><p class="chapter-desc rv">Komunitas penggemar resmi Ralyne</p></div>
-    <div class="shelf"></div>
-    <div class="sec-pad">
-        <div class="fb-banner rv">
-            <div class="fb-banner-inner">
-                <div class="fb-logo-wrap"><div class="fb-logo-glow"></div><img src="Ralyne/2.jpg" class="fb-logo" alt="Logo LibRaly"></div>
-                <div class="fb-banner-text">
-                    <div class="fb-name">LibRaly</div>
-                    <div class="fb-tagline">Official Fanbase of Ralyne Van Irawan</div>
-                    <div class="fb-badge"><span class="fb-badge-dot"></span>Active Fanbase</div>
+        <div id="view-nightsky" class="view">
+            <div class="nightsky-wrap">
+                <canvas class="nightsky-canvas" id="nightskyCanvas"></canvas>
+                <div class="nightsky-ui">
+                    <div class="nightsky-label"><span class="nightsky-label-dot"></span> Community Sky</div>
+                    <h1 class="nightsky-title">Night <span class="ns-accent">Sky</span></h1>
+                    <p class="nightsky-sub">Setiap surat menjadi bintang yang bersinar di langit malam</p>
+                    <div class="nightsky-counter"><span class="nightsky-counter-num" id="nsCounterNum">0</span> stars
+                        collected ✨</div>
+                    <div class="nightsky-prompt">"Have you left a little light today?"</div>
+                    <div class="nightsky-empty-state" id="nsEmptyState">
+                        <div class="ns-empty-icon">🌌</div>
+                        <div class="ns-empty-text">Langit masih kosong</div>
+                        <div class="ns-empty-sub">Jadilah bintang pertama yang bersinar di sini ✨</div>
+                    </div>
+                    <div class="nightsky-actions">
+                        <button class="btn nightsky-btn-primary" onclick="openStarForm()">✨ Leave a Star</button>
+                        <button class="btn btn-glass nightsky-btn-secondary" onclick="switchView('view-home')">🏠 Back
+                            Home</button>
+                    </div>
+                    <div class="nightsky-hint"><span class="ns-hint-icon">✦</span> Click on the stars to read messages
+                    </div>
                 </div>
             </div>
         </div>
-        <div class="fb-desc-card rv">
-            <div class="fb-desc-title">Tentang Fanbase</div>
-            <div class="fb-desc-text" id="fbDescText">Memuat data fanbase...</div>
-        </div>
-        <div class="fb-stats rv">
-            <div class="fb-stat"><div class="fb-stat-icon">🏠</div><div class="fb-stat-label">Fanbase</div><div class="fb-stat-value">LibRaly</div></div>
-            <div class="fb-stat"><div class="fb-stat-icon">💚</div><div class="fb-stat-label">Oshi</div><div class="fb-stat-value">Ralyne</div></div>
-            <div class="fb-stat"><div class="fb-stat-icon">👥</div><div class="fb-stat-label">Member</div><div class="fb-stat-value" id="fbMemberCount">—</div></div>
-            <div class="fb-stat"><div class="fb-stat-icon">📅</div><div class="fb-stat-label">Berdiri</div><div class="fb-stat-value" id="fbFoundedShort">—</div></div>
-        </div>
-        <div class="fb-socials-card rv">
-            <div class="fb-socials-title">Sosial Media Fanbase</div>
-            <div class="fb-socials-list">
-                <a href="https://www.instagram.com/libraly.ofc" target="_blank" rel="noopener" class="fb-social-item ig">
-                    <div class="fb-social-item-icon"><svg viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 1.17.054 1.97.24 2.43.403a4.088 4.088 0 0 1 1.523.99 4.088 4.088 0 0 1 .99 1.524c.163.46.35 1.26.403 2.428.058 1.267.07 1.647.07 4.85s-.012 3.584-.07 4.85c-.054 1.17-.24 1.97-.403 2.43a4.088 4.088 0 0 1-.99 1.523 4.088 4.088 0 0 1-1.524.99c-.46.163-1.26.35-2.428.403-1.267.058-1.647.07-4.85.07s-3.584-.012-4.85-.07c-1.17-.054-1.97-.24-2.43-.403a4.088 4.088 0 0 1-1.523-.99 4.088 4.088 0 0 1-.99-1.524c-.163-.46-.35-1.26-.403-2.428C2.175 15.584 2.163 15.204 2.163 12s.012-3.584.07-4.85c.054-1.17.24-1.97.403-2.43a4.088 4.088 0 0 1 .99-1.523A4.088 4.088 0 0 1 5.15 2.207c.46-.163 1.26-.35 2.428-.403C8.846 2.175 9.226 2.163 12 2.163zM12 0C8.741 0 8.333.014 7.053.072 5.775.131 4.903.333 4.14.63a5.876 5.876 0 0 0-2.126 1.384A5.876 5.876 0 0 0 .63 4.14C.333 4.903.131 5.775.072 7.053.014 8.333 0 8.741 0 12s.014 3.667.072 4.947c.059 1.277.261 2.149.558 2.913a5.876 5.876 0 0 0 1.384 2.126A5.876 5.876 0 0 0 4.14 23.37c.763.296 1.636.499 2.913.558C8.333 23.986 8.741 24 12 24s3.667-.014 4.947-.072c1.277-.059 2.149-.261 2.913-.558a5.876 5.876 0 0 0 2.126-1.384 5.876 5.876 0 0 0 1.384-2.126c.296-.763.499-1.636.558-2.913C23.986 15.667 24 15.259 24 12s-.014-3.667-.072-4.947c-.059-1.277-.261-2.149-.558-2.913a5.876 5.876 0 0 0-1.384-2.126A5.876 5.876 0 0 0 19.86.63C19.097.333 18.224.131 16.947.072 15.667.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 1 0 0 12.324 6.162 6.162 0 0 0 0-12.324zM12 16a4 4 0 1 1 0-8 4 4 0 0 1 0 8zm6.406-11.845a1.44 1.44 0 1 0 0 2.881 1.44 1.44 0 0 0 0-2.881z"/></svg></div>
-                    <div class="fb-social-item-text"><div class="fb-social-item-name">Instagram</div><div class="fb-social-item-handle">@libraly.ofc</div></div>
-                    <svg class="fb-social-item-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
-                </a>
-                <a href="https://x.com/LibRaly_OFC" target="_blank" rel="noopener" class="fb-social-item x">
-                    <div class="fb-social-item-icon"><svg viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg></div>
-                    <div class="fb-social-item-text"><div class="fb-social-item-name">X (Twitter)</div><div class="fb-social-item-handle">@LibRaly_OFC</div></div>
-                    <svg class="fb-social-item-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
-                </a>
-                <a href="https://www.tiktok.com/@libraly.ofc" target="_blank" rel="noopener" class="fb-social-item tt">
-                    <div class="fb-social-item-icon"><svg viewBox="0 0 24 24"><path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-2.88 2.5 2.89 2.89 0 0 1-2.89-2.89 2.89 2.89 0 0 1 2.89-2.89c.28 0 .54.04.79.1v-3.5a6.37 6.37 0 0 0-.79-.05A6.34 6.34 0 0 0 3.15 15.2a6.34 6.34 0 0 0 6.34 6.34 6.34 6.34 0 0 0 6.34-6.34V8.69a8.17 8.17 0 0 0 4.76 1.52v-3.4a4.85 4.85 0 0 1-1-.12z"/></svg></div>
-                    <div class="fb-social-item-text"><div class="fb-social-item-name">TikTok</div><div class="fb-social-item-handle">@libraly.ofc</div></div>
-                    <svg class="fb-social-item-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
-                </a>
+
+        <div id="view-fanbase" class="view">
+            <div class="chapter">
+                <div class="chapter-label rv">Fanbase</div>
+                <h2 class="chapter-title rv">Fanbase</h2>
+                <p class="chapter-desc rv">Komunitas penggemar resmi Ralyne</p>
+            </div>
+            <div class="shelf"></div>
+            <div class="sec-pad">
+                <div class="fb-banner rv">
+                    <div class="fb-banner-inner">
+                        <div class="fb-logo-wrap">
+                            <div class="fb-logo-glow"></div><img src="Ralyne/2.jpg" class="fb-logo" alt="Logo LibRaly">
+                        </div>
+                        <div class="fb-banner-text">
+                            <div class="fb-name">Ralvandra</div>
+                            <div class="fb-tagline">Official Fanbase of Ralyne Van Irawan</div>
+                            <div class="fb-badge"><span class="fb-badge-dot"></span>Active Fanbase</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="fb-desc-card rv">
+                    <div class="fb-desc-title">Tentang Fanbase</div>
+                    <div class="fb-desc-text" id="fbDescText">Memuat data fanbase...</div>
+                </div>
+                <div class="fb-stats rv">
+                    <div class="fb-stat">
+                        <div class="fb-stat-icon">🏠</div>
+                        <div class="fb-stat-label">Fanbase</div>
+                        <div class="fb-stat-value">Ralvandra</div>
+                    </div>
+                    <div class="fb-stat">
+                        <div class="fb-stat-icon">💚</div>
+                        <div class="fb-stat-label">Oshi</div>
+                        <div class="fb-stat-value">Ralyne</div>
+                    </div>
+                    <div class="fb-stat">
+                        <div class="fb-stat-icon">👥</div>
+                        <div class="fb-stat-label">Member</div>
+                        <div class="fb-stat-value" id="fbMemberCount">141</div>
+                    </div>
+                    <div class="fb-stat">
+                        <div class="fb-stat-icon">📅</div>
+                        <div class="fb-stat-label">Berdiri</div>
+                        <div class="fb-stat-value" id="fbFoundedShort">16 Februari 2026</div>
+                    </div>
+                </div>
+                <div class="fb-socials-card rv">
+                    <div class="fb-socials-title">Sosial Media Fanbase</div>
+                    <div class="fb-socials-list">
+                        <!-- Instagram -->
+                        <a href="https://www.instagram.com/ralvandra_ina" target="_blank" class="fb-social-item">
+                            <div class="fb-social-item-icon"><svg viewBox="0 0 24 24" fill="currentColor">
+                                    <path
+                                        d="M12 2.163c3.204 0 3.584.012 4.85.07 1.17.054 1.97.24 2.43.403a4.088 4.088 0 0 1 1.523.99 4.088 4.088 0 0 1 .99 1.524c.163.46.35 1.26.403 2.428.058 1.267.07 1.647.07 4.85s-.012 3.584-.07 4.85c-.054 1.17-.24 1.97-.403 2.43a4.088 4.088 0 0 1-.99 1.523 4.088 4.088 0 0 1-1.524.99c-.46.163-1.26.35-2.428.403-1.267.058-1.647.07-4.85.07s-3.584-.012-4.85-.07c-1.17-.054-1.97-.24-2.43-.403a4.088 4.088 0 0 1-1.523-.99 4.088 4.088 0 0 1-.99-1.524c-.163-.46-.35-1.26-.403-2.428C2.175 15.584 2.163 15.204 2.163 12s.012-3.584.07-4.85c.054-1.17.24-1.97.403-2.43a4.088 4.088 0 0 1 .99-1.523A4.088 4.088 0 0 1 5.15 2.207c.46-.163 1.26-.35 2.428-.403C8.846 2.175 9.226 2.163 12 2.163zM12 0C8.741 0 8.333.014 7.053.072 5.775.131 4.903.333 4.14.63a5.876 5.876 0 0 0-2.126 1.384A5.876 5.876 0 0 0 .63 4.14C.333 4.903.131 5.775.072 7.053.014 8.333 0 8.741 0 12s.014 3.667.072 4.947c.059 1.277.261 2.149.558 2.913a5.876 5.876 0 0 0 1.384 2.126A5.876 5.876 0 0 0 4.14 23.37c.763.296 1.636.499 2.913.558C8.333 23.986 8.741 24 12 24s3.667-.014 4.947-.072c1.277-.059 2.149-.261 2.913-.558a5.876 5.876 0 0 0 2.126-1.384 5.876 5.876 0 0 0 1.384-2.126c.296-.763.499-1.636.558-2.913C23.986 15.667 24 15.259 24 12s-.014-3.667-.072-4.947c-.059-1.277-.261-2.149-.558-2.913a5.876 5.876 0 0 0-1.384-2.126A5.876 5.876 0 0 0 19.86.63C19.097.333 18.224.131 16.947.072 15.667.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 1 0 0 12.324 6.162 6.162 0 0 0 0-12.324zM12 16a4 4 0 1 1 0-8 4 4 0 0 1 0 8zm6.406-11.845a1.44 1.44 0 1 0 0 2.881 1.44 1.44 0 0 0 0-2.881z" />
+                                </svg></div>
+                            <div class="fb-social-item-text">
+                                <div class="fb-social-item-name">Instagram</div>
+                                <div class="fb-social-item-handle">@ralvandra_ina</div>
+                            </div><svg class="fb-social-item-arrow" viewBox="0 0 24 24" fill="none"
+                                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <polyline points="9 18 15 12 9 6" />
+                            </svg>
+                        </a>
+                        <!-- X (Twitter) -->
+                        <a href="https://x.com/ralvandra_ina" target="_blank" class="fb-social-item">
+                            <div class="fb-social-item-icon"><svg viewBox="0 0 24 24" fill="currentColor">
+                                    <path
+                                        d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
+                                </svg></div>
+                            <div class="fb-social-item-text">
+                                <div class="fb-social-item-name">X</div>
+                                <div class="fb-social-item-handle">@ralvandra_ina</div>
+                            </div><svg class="fb-social-item-arrow" viewBox="0 0 24 24" fill="none"
+                                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <polyline points="9 18 15 12 9 6" />
+                            </svg>
+                        </a>
+                        <!-- TikTok -->
+                        <a href="https://www.tiktok.com/@ralvandra_ina" target="_blank" class="fb-social-item">
+                            <div class="fb-social-item-icon"><svg viewBox="0 0 24 24" fill="currentColor">
+                                    <path
+                                        d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-2.88 2.5 2.89 2.89 0 0 1-2.88-2.88c.3 0 .58.05.85.12V9.01a6.33 6.33 0 0 0-.85-.06 6.34 6.34 0 0 0-6.34 6.34 6.34 6.34 0 0 0 6.34 6.34 6.34 6.34 0 0 0 6.34-6.34V8.75a8.18 8.18 0 0 0 4.76 1.52V6.84a4.84 4.84 0 0 1-1-.15z" />
+                                </svg></div>
+                            <div class="fb-social-item-text">
+                                <div class="fb-social-item-name">TikTok</div>
+                                <div class="fb-social-item-handle">@ralvandra_ina</div>
+                            </div><svg class="fb-social-item-arrow" viewBox="0 0 24 24" fill="none"
+                                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <polyline points="9 18 15 12 9 6" />
+                            </svg>
+                        </a>
+                    </div>
+                </div>
+                <div class="fb-faq-section rv">
+                    <div class="fb-faq-title"><svg class="fb-faq-title-icon" viewBox="0 0 24 24">
+                            <circle cx="12" cy="12" r="10" />
+                            <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3" />
+                            <line x1="12" y1="17" x2="12.01" y2="17" />
+                        </svg>FAQ (Pertanyaan Umum)</div>
+                    <div class="fb-faq-list" id="fbFaqList">
+                        <div class="empty-state" style="padding:32px 20px">
+                            <div style="font-size:1.8rem;margin-bottom:10px;opacity:.4">💬</div>
+                            <div>Memuat FAQ...</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="fb-reg-section rv">
+                    <div class="fb-reg-card">
+                        <div class="fb-reg-title"><svg viewBox="0 0 24 24"
+                                style="width:18px;height:18px;stroke:var(--gold-light);fill:none;stroke-width:2">
+                                <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
+                                <circle cx="8.5" cy="7" r="4" />
+                                <line x1="20" y1="8" x2="20" y2="14" />
+                                <line x1="23" y1="11" x2="17" y2="11" />
+                            </svg>Pendaftaran Member</div>
+                        <div class="fb-reg-status closed" id="fbRegStatus"><span class="fb-reg-dot"></span>Belum Dibuka
+                        </div><button class="fb-reg-btn closed" id="fbRegBtn" disabled>Belum Dibuka</button>
+                        <div class="fb-reg-note" id="fbRegNote">Pendaftaran akan dibuka melalui web admin.</div>
+                    </div>
+                </div>
+            </div>
+            <div class="footer">
+                <div class="footer-brand"><span class="lib">Lib</span><span class="raly">Raly</span></div>
+                <div class="footer-copy">© 2026 LibRaly</div>
             </div>
         </div>
-        <div class="fb-faq-section rv">
-            <div class="fb-faq-title"><svg class="fb-faq-title-icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>FAQ (Pertanyaan Umum)</div>
-            <div class="fb-faq-list" id="fbFaqList"><div class="empty-state" style="padding:32px 20px"><div style="font-size:1.8rem;margin-bottom:10px;opacity:.4">💬</div><div>Memuat FAQ...</div></div></div>
-        </div>
-        <div class="fb-reg-section rv">
-            <div class="fb-reg-card">
-                <div class="fb-reg-title"><svg viewBox="0 0 24 24" style="width:18px;height:18px;stroke:var(--gold-light);fill:none;stroke-width:2"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="8.5" cy="7" r="4"/><line x1="20" y1="8" x2="20" y2="14"/><line x1="23" y1="11" x2="17" y2="11"/></svg>Pendaftaran Member</div>
-                <div class="fb-reg-status closed" id="fbRegStatus"><span class="fb-reg-dot"></span>Belum Dibuka</div>
-                <button class="fb-reg-btn closed" id="fbRegBtn" disabled>Belum Dibuka</button>
-                <div class="fb-reg-note" id="fbRegNote">Pendaftaran akan dibuka melalui web admin.</div>
+
+        <div id="view-projects" class="view">
+            <div class="coming-soon-wrap">
+                <div class="cs-glow"></div>
+                <div class="cs-content rv">
+                    <div class="cs-icon">🚧</div>
+                    <div class="cs-label"><span class="cs-label-dot"></span> Coming Soon</div>
+                    <h2 class="cs-title"><span class="t-dim">Proyek</span> <span class="t-mint">Penggemar</span></h2>
+                    <p class="cs-desc">Proyek penggemar akan hadir seiring tumbuhnya komunitas ini.</p>
+                </div>
+            </div>
+            <div class="footer">
+                <div class="footer-brand"><span class="lib">Lib</span><span class="raly">Raly</span></div>
+                <div class="footer-copy">© 2026 LibRaly</div>
             </div>
         </div>
+
     </div>
-    <div class="footer"><div class="footer-brand"><span class="lib">Lib</span><span class="raly">Raly</span></div><div class="footer-copy">© 2026 LibRaly</div></div>
-</div>
 
-<!-- PROJECTS -->
-<div id="view-projects" class="view">
-    <div class="coming-soon-wrap">
-        <div class="cs-glow"></div>
-        <div class="cs-content rv">
-            <div class="cs-icon">🚧</div>
-            <div class="cs-label"><span class="cs-label-dot"></span> Coming Soon</div>
-            <h2 class="cs-title"><span class="t-dim">Proyek</span> <span class="t-mint">Penggemar</span></h2>
-            <p class="cs-desc">Proyek penggemar akan hadir seiring tumbuhnya komunitas ini.</p>
-            <div class="cs-divider"><div class="cs-divider-line"></div><div class="cs-divider-diamond"></div><div class="cs-divider-line"></div></div>
-        </div>
-    </div>
-    <div class="footer"><div class="footer-brand"><span class="lib">Lib</span><span class="raly">Raly</span></div><div class="footer-copy">© 2026 LibRaly</div></div>
-</div>
-
-</div><!-- end view-container -->
-
-<!-- BIRTHDAY OVERLAY -->
-<div class="bday-overlay" id="bdayOverlay">
-    <button class="bday-close" onclick="closeBirthday()">✕</button>
-    <div class="bday-content">
-        <div class="bday-top">
-            <div class="bday-glow-ring"></div>
-            <div class="bday-label-top">Countdown to</div>
-            <div class="bday-name-title">Ralyne's Birthday</div>
-            <div class="bday-date-label">15 Oktober</div>
-            <div class="bday-timer">
-                <div class="bday-time-unit"><div class="bday-time-num" id="bdDays">00</div><div class="bday-time-label">Hari</div></div>
-                <div class="bday-time-sep">:</div>
-                <div class="bday-time-unit"><div class="bday-time-num" id="bdHours">00</div><div class="bday-time-label">Jam</div></div>
-                <div class="bday-time-sep">:</div>
-                <div class="bday-time-unit"><div class="bday-time-num" id="bdMins">00</div><div class="bday-time-label">Menit</div></div>
-                <div class="bday-time-sep">:</div>
-                <div class="bday-time-unit"><div class="bday-time-num" id="bdSecs">00</div><div class="bday-time-label">Detik</div></div>
+    <div class="bday-overlay" id="bdayOverlay">
+        <button class="bday-close" onclick="closeBirthday()">✕</button>
+        <div class="bday-content">
+            <div class="bday-top">
+                <div class="bday-glow-ring"></div>
+                <div class="bday-label-top">Countdown to</div>
+                <div class="bday-name-title">Ralyne's Birthday</div>
+                <div class="bday-date-label">15 Oktober</div>
+                <div class="bday-timer">
+                    <div class="bday-time-unit">
+                        <div class="bday-time-num" id="bdDays">00</div>
+                        <div class="bday-time-label">Hari</div>
+                    </div>
+                    <div class="bday-time-sep">:</div>
+                    <div class="bday-time-unit">
+                        <div class="bday-time-num" id="bdHours">00</div>
+                        <div class="bday-time-label">Jam</div>
+                    </div>
+                    <div class="bday-time-sep">:</div>
+                    <div class="bday-time-unit">
+                        <div class="bday-time-num" id="bdMins">00</div>
+                        <div class="bday-time-label">Menit</div>
+                    </div>
+                    <div class="bday-time-sep">:</div>
+                    <div class="bday-time-unit">
+                        <div class="bday-time-num" id="bdSecs">00</div>
+                        <div class="bday-time-label">Detik</div>
+                    </div>
+                </div>
             </div>
+            <button class="bday-forum-btn" onclick="openLetterForm()">✉️ Tulis Surat untuk Ralyne</button>
+            <div class="bday-letters-header">
+                <div class="bday-letters-title">Pesan dari Penggemar <span class="bday-letters-count"
+                        id="letterCountBadge">0</span></div>
+                <div class="bday-letters-sub">Ucapan & harapan untuk Ralyne</div>
+            </div>
+            <div class="letters-masonry" id="lettersMasonry"></div>
         </div>
-        <div class="bday-divider"><div class="bday-divider-line"></div><div class="bday-divider-icon">✦</div><div class="bday-divider-line"></div></div>
-        <button class="bday-forum-btn" onclick="openLetterForm()">✉️ Tulis Surat untuk Ralyne</button>
-        <div class="bday-letters-header">
-            <div class="bday-letters-title">Pesan dari Penggemar <span class="bday-letters-count" id="letterCountBadge">0</span></div>
-            <div class="bday-letters-sub">Ucapan & harapan untuk Ralyne</div>
+    </div>
+
+    <div class="form-modal" id="formModal">
+        <div class="form-modal-box"><button class="form-modal-close" onclick="closeLetterForm()">✕</button>
+            <div class="form-modal-title">Tulis Surat</div>
+            <div class="form-modal-sub">Ungkapkan pesan terbaikmu untuk Ralyne di hari spesialnya nanti.</div>
+            <div class="forum-field"><label class="forum-label">Nama</label><input type="text" id="fName"
+                    class="forum-input" placeholder="Namamu atau nama panggilan" maxlength="30" /></div>
+            <div class="forum-field"><label class="forum-label">Akun X / Media Sosial</label><input type="text"
+                    id="fSocial" class="forum-input" placeholder="@username" maxlength="40" /></div>
+            <div class="forum-field"><label class="forum-label">Pesan untuk Ralyne</label><textarea id="fMsg"
+                    class="forum-textarea" placeholder="Tulis pesan, harapan, atau ucapan untuk Ralyne..."
+                    maxlength="300" oninput="updateCharCount()"></textarea>
+                <div class="forum-char-count"><span id="charCount">0</span>/300</div>
+            </div><button class="forum-submit" onclick="submitLetter()">Kirim Surat</button>
         </div>
-        <div class="letters-masonry" id="lettersMasonry"></div>
-        <div class="bday-footer-note">Dari Ralynee, untuk Ralyne 🍃</div>
     </div>
-</div>
 
-<!-- FORM MODAL -->
-<div class="form-modal" id="formModal">
-    <div class="form-modal-box">
-        <button class="form-modal-close" onclick="closeLetterForm()">✕</button>
-        <div class="form-modal-title">Tulis Surat</div>
-        <div class="form-modal-sub">Ungkapkan pesan terbaikmu untuk Ralyne di hari spesialnya nanti.</div>
-        <div class="forum-field"><label class="forum-label">Nama</label><input type="text" id="fName" class="forum-input" placeholder="Namamu atau nama panggilan" maxlength="30" /></div>
-        <div class="forum-field"><label class="forum-label">Akun X / Media Sosial</label><input type="text" id="fSocial" class="forum-input" placeholder="@username" maxlength="40" /></div>
-        <div class="forum-field"><label class="forum-label">Pesan untuk Ralyne</label><textarea id="fMsg" class="forum-textarea" placeholder="Tulis pesan, harapan, atau ucapan untuk Ralyne..." maxlength="300" oninput="updateCharCount()"></textarea><div class="forum-char-count"><span id="charCount">0</span>/300</div></div>
-        <button class="forum-submit" onclick="submitLetter()">Kirim Surat</button>
+    <div class="star-popup-overlay" id="starPopupOverlay" onclick="closeStarPopup()">
+        <div class="star-popup" onclick="event.stopPropagation()"><button class="star-popup-close"
+                onclick="closeStarPopup()">✕</button>
+            <div class="star-popup-star">✨</div>
+            <div class="star-popup-name" id="spName">Name</div>
+            <div class="star-popup-social" id="spSocial">@social</div>
+            <div class="star-popup-divider"></div>
+            <div class="star-popup-msg" id="spMsg">Message here...</div>
+            <div class="star-popup-time" id="spTime">Time</div>
+        </div>
     </div>
-</div>
 
-<!-- REG MODAL -->
-<div class="reg-modal" id="regModal">
-    <div class="reg-modal-box">
-        <button class="reg-modal-close" onclick="closeRegModal()">✕</button>
-        <div class="reg-modal-title">Pendaftaran Member</div>
-        <div class="reg-modal-sub">Bergabunglah dengan fanbase LibRaly! Data kamu akan tersimpan dan diverifikasi admin.</div>
-        <div class="forum-field"><label class="forum-label">Nama Lengkap / Panggilan</label><input type="text" id="regName" class="forum-input" placeholder="Nama kamu" maxlength="40" /></div>
-        <div class="forum-field"><label class="forum-label">Akun X / Instagram</label><input type="text" id="regSocial" class="forum-input" placeholder="@username" maxlength="50" /></div>
-        <div class="forum-field"><label class="forum-label">Kenapa Ralyne?</label><textarea id="regReason" class="forum-textarea" placeholder="Ceritakan alasan kamu mendukung Ralyne..." maxlength="200" oninput="updateRegCharCount()"></textarea><div class="forum-char-count"><span id="regCharCount">0</span>/200</div></div>
-        <button class="forum-submit" onclick="submitRegistration()">Kirim Pendaftaran</button>
+    <div class="starform-modal" id="starFormModal" onclick="closeStarForm()">
+        <div class="starform-box" onclick="event.stopPropagation()"><button class="starform-close"
+                onclick="closeStarForm()">✕</button>
+            <div class="starform-title">Leave a Star ✨</div>
+            <div class="starform-sub">Write a message to Ralyne. It will become a glowing star in the night sky.</div>
+            <div class="forum-field"><label class="forum-label">Your Name</label><input type="text" id="sfName"
+                    class="forum-input" placeholder="Your name or nickname" maxlength="30" /></div>
+            <div class="forum-field"><label class="forum-label">Social Media</label><input type="text" id="sfSocial"
+                    class="forum-input" placeholder="@username" maxlength="40" /></div>
+            <div class="forum-field"><label class="forum-label">Your Message</label><textarea id="sfMsg"
+                    class="forum-textarea" placeholder="Write your wish or message..." maxlength="200"
+                    oninput="updateSfCharCount()"></textarea>
+                <div class="forum-char-count"><span id="sfCharCount">0</span>/200</div>
+            </div><button class="forum-submit starform-submit" onclick="submitStar()">Send to the Sky</button>
+        </div>
     </div>
-</div>
 
-<!-- LIGHTBOX -->
-<div class="lightbox" id="lightbox">
-    <div class="lightbox-backdrop" onclick="closeLightbox()"></div>
-    <div class="lightbox-content">
-        <button class="lightbox-close" onclick="closeLightbox()" aria-label="Tutup">&times;</button>
-        <button class="lb-nav lb-prev disabled" id="lbPrev" onclick="event.stopPropagation();lightboxNav(-1)" aria-label="Sebelumnya"><svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg></button>
-        <img src="" alt="Preview" id="lightboxImg" onclick="event.stopPropagation()">
-        <button class="lb-nav lb-next" id="lbNext" onclick="event.stopPropagation();lightboxNav(1)" aria-label="Selanjutnya"><svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg></button>
-        <div class="lb-counter" id="lbCounter"></div>
+    <div class="reg-modal" id="regModal">
+        <div class="reg-modal-box"><button class="reg-modal-close" onclick="closeRegModal()">✕</button>
+            <div class="reg-modal-title">Pendaftaran Member</div>
+            <div class="reg-modal-sub">Bergabunglah dengan fanbase LibRaly! Data kamu akan tersimpan dan diverifikasi
+                admin.</div>
+            <div class="forum-field"><label class="forum-label">Nama Lengkap / Panggilan</label><input type="text"
+                    id="regName" class="forum-input" placeholder="Nama kamu" maxlength="40" /></div>
+            <div class="forum-field"><label class="forum-label">Akun X / Instagram</label><input type="text"
+                    id="regSocial" class="forum-input" placeholder="@username" maxlength="50" /></div>
+            <div class="forum-field"><label class="forum-label">Kenapa Ralyne?</label><textarea id="regReason"
+                    class="forum-textarea" placeholder="Ceritakan alasan kamu mendukung Ralyne..." maxlength="200"
+                    oninput="updateRegCharCount()"></textarea>
+                <div class="forum-char-count"><span id="regCharCount">0</span>/200</div>
+            </div><button class="forum-submit" onclick="submitRegistration()">Kirim Pendaftaran</button>
+        </div>
     </div>
-</div>
 
-<div class="toast" id="toast"></div>
-<button class="btt" id="btt" aria-label="Ke atas">↑</button>
-
-<script>
-/* ========================================================
-   CONFIG & DATA VARIABLES
-   ======================================================== */
-var API_URL = 'https://script.google.com/macros/s/AKfycbz4UvN8c09Mv8ShudywG2YVp3E-mB1mwUUerT9EfhbJHHaFWDvWbxI_iLABoMZvhXkAKA/exec';
-
-var FANBASE_DATA = {
-    name: "LibRaly", tagline: "Official Fanbase of Ralyne Van Irawan",
-    description: "LibRaly adalah fanbase tidak resmi yang didedikasikan untuk mendukung Ralyne Van Irawan — Trainee JKT48 Gen 14. Kami berkumpul untuk berbagi informasi, mendokumentasikan perjalanan Ralyne, dan menciptakan komunitas yang positif serta suportif bagi sesama Ralynee.",
-    foundedDate: "2025-01-18", registrationOpen: false, registrationLink: '', faq: [], members: []
-};
-
-var GALLERY_RALYNE = [];
-var GALLERY_RALVANDRA = [];
-var SCHEDULE_DATA = { upcoming: [], tickets: [], unitSongs: [], history: {} };
-var HASHTAG_DATA = [];
-var FUNFACT_DATA = [];
-var VIDEO_DATA = [];
-var LETTER_DATA = [];
-
-// Utility: Escape HTML to prevent XSS
-function escapeHtml(text) {
-    if (!text) return '';
-    var map = { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#039;' };
-    return String(text).replace(/[&<>"']/g, function(m) { return map[m]; });
-}
-
-// Utility: Convert YouTube/TikTok Watch URL to Embed URL
-function getEmbedUrl(url) {
-    if (!url) return '';
-    var ytMatch = url.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/)([^&\s]+)/);
-    if (ytMatch) return 'https://www.youtube.com/embed/' + ytMatch[1];
-    var ytShort = url.match(/youtube\.com\/shorts\/([^?\s]+)/);
-    if (ytShort) return 'https://www.youtube.com/embed/' + ytShort[1];
-    var ttMatch = url.match(/tiktok\.com\/@[^/]+\/video\/(\d+)/);
-    if (ttMatch) return 'https://www.tiktok.com/embed/v2/' + ttMatch[1];
-    return url; // Jika sudah embed atau link lain, kembalikan apa adanya
-}
-
-// Utility: Convert Indonesian Date to Date Object
-function parseIDDate(str) {
-    if (!str) return new Date(0);
-    var months = {'januari':0,'februari':1,'maret':2,'april':3,'mei':4,'juni':5,'juli':6,'agustus':7,'september':8,'oktober':9,'november':10,'desember':11};
-    var p = str.toLowerCase().replace(/[^a-z0-9\s]/g,'').trim().split(/\s+/);
-    if(p.length < 3) return new Date(0);
-    var day = parseInt(p[0],10), mon = months[p[1]], year = parseInt(p[2],10);
-    if(isNaN(day)||isNaN(mon)||isNaN(year)) return new Date(0);
-    return new Date(year, mon, day);
-}
-
-/* ========================================================
-   DATA LOADING FUNCTIONS (ALIGNED WITH ADMIN)
-   ======================================================== */
-function loadHashtags() {
-    return fetch(API_URL + '?action=readHashtags&t=' + Date.now())
-    .then(function(r) { return r.json(); })
-    .then(function(data) {
-        if (Array.isArray(data) && data.length > 0) {
-            HASHTAG_DATA = data.map(function(row) {
-                return { desc: row.keterangan || row.desc || '', tag: row.hashtag || row.tag || '' };
-            }).filter(function(h) { return h.tag.length > 0; });
-        }
-    }).catch(function() { console.error('Hashtags load failed'); });
-}
-
-function loadFunFacts() {
-    return fetch(API_URL + '?action=readFunFacts&t=' + Date.now())
-    .then(function(r) { return r.json(); })
-    .then(function(data) {
-        if (Array.isArray(data) && data.length > 0) {
-            FUNFACT_DATA = data.map(function(row) {
-                return { text: row.text || row.fact || row.fakta || '' };
-            }).filter(function(f) { return f.text.length > 0; });
-        }
-    }).catch(function() { console.error('FunFacts load failed'); });
-}
-
-function loadVideos() {
-    return fetch(API_URL + '?action=readVideos&t=' + Date.now())
-    .then(function(r) { return r.json(); })
-    .then(function(data) {
-        if (Array.isArray(data) && data.length > 0) {
-            VIDEO_DATA = data.map(function(row) {
-                return { 
-                    embed: getEmbedUrl(row.link || row.embed || row.url || ''), 
-                    title: row.judul || row.title || '', 
-                    platform: row.platform || '',
-                    featured: row.featured === 'TRUE' || row.featured === true 
-                };
-            }).filter(function(v) { return v.embed.length > 0; });
-        }
-    }).catch(function() { console.error('Videos load failed'); });
-}
-
-function loadLetters() {
-    return fetch(API_URL + '?action=readWishes&t=' + Date.now())
-    .then(function(r) { return r.json(); })
-    .then(function(data) {
-        if (Array.isArray(data)) {
-            LETTER_DATA = data.map(function(row) {
-                return { name: row.nama || row.name || '', social: row.social || '', message: row.pesan || row.message || '', time: row.timestamp || row.time || '' };
-            });
-        }
-    }).catch(function() { console.error('Letters load failed'); });
-}
-
-function loadFaq() {
-    return fetch(API_URL + '?action=readFaq&t=' + Date.now())
-    .then(function(r) { return r.json(); })
-    .then(function(data) {
-        if (Array.isArray(data)) {
-            FANBASE_DATA.faq = data.map(function(row) {
-                return { q: row.q || row.pertanyaan || '', a: row.a || row.jawaban || '' };
-            });
-        }
-    }).catch(function() { console.error('FAQ load failed'); });
-}
-
-function loadFanbase() {
-    return fetch(API_URL + '?action=readFanbase&t=' + Date.now())
-    .then(function(r) { return r.json(); })
-    .then(function(data) {
-        if (data) {
-            FANBASE_DATA.name = data.name || FANBASE_DATA.name;
-            FANBASE_DATA.tagline = data.tagline || FANBASE_DATA.tagline;
-            FANBASE_DATA.description = data.description || FANBASE_DATA.description;
-            FANBASE_DATA.foundedDate = data.foundedDate || FANBASE_DATA.foundedDate;
-            FANBASE_DATA.registrationOpen = data.registrationOpen || false;
-            FANBASE_DATA.registrationLink = data.registrationLink || '';
-            FANBASE_DATA.members = data.members || [];
-        }
-    }).catch(function() { console.error('Fanbase load failed'); });
-}
-
-function loadGalleryRalyne() {
-    return fetch(API_URL + '?action=readGalleryRalyne&t=' + Date.now())
-    .then(function(r) { return r.json(); })
-    .then(function(data) { if (Array.isArray(data)) GALLERY_RALYNE = data; })
-    .catch(function() { console.error('Gallery Ralyne load failed'); });
-}
-
-function loadGalleryRalvandra() {
-    return fetch(API_URL + '?action=readGalleryRalvandra&t=' + Date.now())
-    .then(function(r) { return r.json(); })
-    .then(function(data) { if (Array.isArray(data)) GALLERY_RALVANDRA = data; })
-    .catch(function() { console.error('Gallery Ralvandra load failed'); });
-}
-
-function loadSchedule() {
-    return fetch(API_URL + '?action=readSchedule&t=' + Date.now())
-    .then(function(r) { return r.json(); })
-    .then(function(data) {
-        if (Array.isArray(data)) {
-            var today = new Date(); today.setHours(0,0,0,0);
-            var upcoming = [], unitSongs = [], historyMap = {};
-            var temaTypes = ['vc', '2shoot', 'mg'];
-
-            data.forEach(function(row) {
-                var isPast = parseIDDate(row.tanggal) < today;
-                var isTema = temaTypes.indexOf(row.tipe) !== -1;
-
-                // Upcoming Schedule
-                if (!isPast && !isTema) {
-                    var tglParts = (row.tanggal || '').split(' ');
-                    upcoming.push({
-                        title: row.nama || '', 
-                        day: tglParts[0] || '', 
-                        month: tglParts[1] || '', 
-                        time: row.jam || '', 
-                        tag: row.tipe || 'Show'
-                    });
-                }
-
-                // Unit Song (dari theater yang sudah lewat)
-                if (isPast && !isTema && row.unitSong) {
-                    var songs = row.unitSong.split('\n');
-                    songs.forEach(function(s) {
-                        if(s.trim()) unitSongs.push({ name: s.trim(), setlist: row.nama || '', original: row.deskripsi || '' });
-                    });
-                }
-
-                // History / Reschedule
-                if (isPast) {
-                    var key = row.nama || 'Lainnya';
-                    if (!historyMap[key]) historyMap[key] = { shows: [] };
-                    
-                    var tglParts2 = (row.tanggal || '').split(' ');
-                    historyMap[key].shows.push({
-                        count: 1, 
-                        name: key, 
-                        dates: [{ day: tglParts2[0] || '', mon: tglParts2[1] || '', time: row.jam || '' }]
-                    });
-                }
-            });
-
-            // Group history counts
-            Object.keys(historyMap).forEach(function(key) {
-                var shows = historyMap[key].shows;
-                var count = shows.length;
-                historyMap[key].shows = [{ name: key, count: count, dates: shows.map(function(s) { return s.dates[0]; }) }];
-            });
-
-            SCHEDULE_DATA.upcoming = upcoming;
-            SCHEDULE_DATA.unitSongs = unitSongs;
-            SCHEDULE_DATA.history = historyMap;
-
-        } else if (data && typeof data === 'object') {
-            SCHEDULE_DATA.upcoming = data.upcoming || [];
-            SCHEDULE_DATA.tickets = data.tickets || [];
-            SCHEDULE_DATA.unitSongs = data.unitSongs || [];
-            SCHEDULE_DATA.history = data.history || {};
-        }
-    }).catch(function() { console.error('Schedule load failed'); });
-}
-
-// TAMBAHAN: Memuat Tiket Terpisah Sesuai Admin
-function loadTickets() {
-    return fetch(API_URL + '?action=readTickets&t=' + Date.now())
-    .then(function(r) { return r.json(); })
-    .then(function(data) {
-        if (Array.isArray(data)) {
-            SCHEDULE_DATA.tickets = data.map(function(row) {
-                return {
-                    title: row.title || '', subtitle: row.subtitle || '',
-                    type: row.type || 'vc', typeLabel: row.typeLabel || row.type || '',
-                    day: row.day || '', mon: row.mon || '', dow: row.dow || '',
-                    time: row.time || '', venue: row.venue || '',
-                    price: row.price || '', priceNote: row.priceNote || '',
-                    status: row.status || 'open', statusLabel: row.statusLabel || row.status || ''
-                };
-            });
-        }
-    }).catch(function() { console.error('Tickets load failed'); });
-}
-
-// Initialize App
-async function initApp() {
-    await Promise.all([
-        loadHashtags(), loadFunFacts(), loadVideos(), loadLetters(), 
-        loadFanbase(), loadFaq(), loadGalleryRalyne(), loadGalleryRalvandra(), 
-        loadSchedule(), loadTickets() // Ditambahkan loadFaq() & loadTickets()
-    ]);
-    renderAllDynamicContent();
-}
-
-window.addEventListener('load', function() {
-    setTimeout(function() { document.getElementById('introOverlay').classList.add('hide'); }, 1700);
-    initApp();
-});
-
-
-/* ========================================================
-   RENDERING FUNCTIONS (ALIGNED WITH ADMIN FIELDS)
-   ======================================================== */
-function renderAllDynamicContent() {
-    renderHashtagsPreview();
-    renderFunFactsPreview();
-    renderVideoPreview();
-    renderUpcoming();
-    renderTickets();
-    renderUnitSongs();
-    renderReschedule();
-    renderHeroPeek();
-    renderGalRalyne();
-    renderGalRalvandra();
-    renderFanbasePage();
-    renderLetters();
-}
-
-// HASHTAGS
-function renderHashtagsPreview() {
-    var c = document.getElementById('hashtagPreviewContainer');
-    if (!HASHTAG_DATA.length) { c.innerHTML = '<div class="empty-state">Belum ada hashtag.</div>'; return; }
-    c.innerHTML = HASHTAG_DATA.slice(0, 5).map(function(h) {
-        return '<div class="info-row"><span class="hashtag-pill">#' + escapeHtml(h.tag) + '</span><span class="hashtag-desc">' + escapeHtml(h.desc) + '</span></div>';
-    }).join('');
-}
-
-function renderHashtagsFull() {
-    var c = document.getElementById('hashtagFullContainer');
-    if (!HASHTAG_DATA.length) { c.innerHTML = '<div class="empty-state">Belum ada hashtag.</div>'; return; }
-    c.innerHTML = HASHTAG_DATA.map(function(h) {
-        return '<div class="info-row"><span class="hashtag-pill">#' + escapeHtml(h.tag) + '</span><span class="hashtag-desc">' + escapeHtml(h.desc) + '</span></div>';
-    }).join('');
-}
-
-// FUNFACTS
-function renderFunFactsPreview() {
-    var c = document.getElementById('funfactContainer');
-    if (!FUNFACT_DATA.length) { c.innerHTML = '<div class="empty-state">Belum ada fun fact.</div>'; return; }
-    c.innerHTML = FUNFACT_DATA.slice(0, 4).map(function(f, i) {
-        return '<div class="sticky-note" style="transform:rotate(' + (i % 2 === 0 ? '-' : '') + (i+1) + 'deg)"><div class="sticky-note-quote">💡</div><div class="sticky-note-text">' + escapeHtml(f.text) + '</div></div>';
-    }).join('');
-    var lmWrap = document.getElementById('funfactPreviewLoadmore');
-    if (lmWrap) lmWrap.style.display = FUNFACT_DATA.length > 4 ? '' : 'none';
-}
-
-function renderFunFactsFull() {
-    var c = document.getElementById('fullFunfactContainer');
-    if (!FUNFACT_DATA.length) { c.innerHTML = '<div class="empty-state">Belum ada fun fact.</div>'; return; }
-    c.innerHTML = FUNFACT_DATA.map(function(f, i) {
-        return '<div class="sticky-note" style="transform:rotate(' + (i % 2 === 0 ? '-' : '') + (i+1) + 'deg)"><div class="sticky-note-quote">💡</div><div class="sticky-note-text">' + escapeHtml(f.text) + '</div></div>';
-    }).join('');
-}
-
-// VIDEOS
-function renderVideoPreview() {
-    var c = document.getElementById('videoPreviewContainer');
-    if (!VIDEO_DATA.length) { c.innerHTML = '<div class="empty-state">Belum ada video.</div>'; return; }
-    var feat = VIDEO_DATA.find(function(v) { return v.featured; }) || VIDEO_DATA[0];
-    var others = VIDEO_DATA.filter(function(v) { return v !== feat; }).slice(0, 3);
-    var html = '<div class="video-featured"><iframe src="' + escapeHtml(feat.embed) + '" allowfullscreen></iframe></div>';
-    if (others.length) {
-        html += '<div class="video-grid">';
-        others.forEach(function(v) {
-            html += '<div class="video-card" onclick="playVideo(\'' + escapeHtml(v.embed) + '\')"><div class="video-card-play"><div>▶</div></div><div class="video-card-label">' + escapeHtml(v.title) + '</div></div>';
-        });
-        html += '</div>';
-    }
-    c.innerHTML = html;
-}
-
-function renderVideoFull() {
-    var c = document.getElementById('videoFullContainer');
-    if (!VIDEO_DATA.length) { c.innerHTML = '<div class="empty-state">Belum ada video.</div>'; return; }
-    var feat = VIDEO_DATA.find(function(v) { return v.featured; }) || VIDEO_DATA[0];
-    var others = VIDEO_DATA.filter(function(v) { return v !== feat; });
-    var html = '<div class="video-featured"><iframe src="' + escapeHtml(feat.embed) + '" allowfullscreen></iframe></div>';
-    if (others.length) {
-        html += '<div class="video-grid">';
-        others.forEach(function(v) {
-            html += '<div class="video-card" onclick="playVideo(\'' + escapeHtml(v.embed) + '\')"><div class="video-card-play"><div>▶</div></div><div class="video-card-label">' + escapeHtml(v.title) + '</div></div>';
-        });
-        html += '</div>';
-    }
-    c.innerHTML = html;
-}
-
-function playVideo(url) { var feat = document.querySelector('.video-featured iframe'); if (feat) feat.src = url; }
-
-// SCHEDULE
-function renderUpcoming() {
-    var el = document.getElementById('upcomingList');
-    if (!SCHEDULE_DATA.upcoming.length) { el.innerHTML = '<div class="empty-state">Belum ada jadwal yang akan datang.</div>'; return; }
-    el.innerHTML = SCHEDULE_DATA.upcoming.map(function(u) {
-        return '<div class="upcoming-card cat-theater"><div class="upcoming-date"><div class="d">' + escapeHtml(u.day) + '</div><div class="m">' + escapeHtml(u.month) + '</div></div><div class="upcoming-info"><div class="upcoming-title">' + escapeHtml(u.title) + '</div><div class="upcoming-time">' + escapeHtml(u.time || '') + '</div></div><span class="upcoming-tag utag-theater">' + escapeHtml(u.tag || 'Show') + '</span></div>';
-    }).join('');
-}
-
-function renderTickets() {
-    var el = document.getElementById('ticketGrid');
-    if (!SCHEDULE_DATA.tickets.length) { el.innerHTML = '<div class="empty-state" style="grid-column:1/-1;">Belum ada tiket tersedia.</div>'; return; }
-    el.innerHTML = SCHEDULE_DATA.tickets.map(function(t) {
-        var soldClass = t.status === 'sold' ? ' ticket-sold-card' : '';
-        return '<div class="ticket-card' + soldClass + '"><div class="ticket-top"><div class="ticket-date-block"><div class="ticket-dow">' + escapeHtml(t.dow || '') + '</div><div class="ticket-day">' + escapeHtml(t.day || '') + '</div><div class="ticket-mon">' + escapeHtml(t.mon || '') + '</div></div><div class="ticket-body"><div class="ticket-header"><div><div class="ticket-title">' + escapeHtml(t.title || '') + '</div><div class="ticket-subtitle">' + escapeHtml(t.subtitle || '') + '</div></div><span class="ticket-type-badge badge-' + escapeHtml(t.type || 'vc') + '">' + escapeHtml(t.typeLabel || t.type || '') + '</span></div><div class="ticket-meta"><span class="ticket-meta-item"><span class="ticket-meta-icon">🕐</span><span class="ticket-meta-val">' + escapeHtml(t.time || '') + '</span></span><span class="ticket-meta-item"><span class="ticket-meta-icon">📍</span><span class="ticket-meta-val">' + escapeHtml(t.venue || '') + '</span></span></div><div class="ticket-footer"><div class="ticket-price">' + escapeHtml(t.price || '') + ' <span>' + escapeHtml(t.priceNote || '') + '</span></div><span class="ticket-status status-' + escapeHtml(t.status || 'open') + '"><span class="status-dot"></span>' + escapeHtml(t.statusLabel || t.status || '') + '</span></div></div></div></div>';
-    }).join('');
-}
-
-function renderUnitSongs() {
-    var el = document.getElementById('unitScrollTrack');
-    if (!SCHEDULE_DATA.unitSongs.length) { el.style.animation = 'none'; el.innerHTML = '<div class="empty-state" style="width:100%;min-width:0;">Belum ada unit song tercatat.</div>'; return; }
-    var cards = SCHEDULE_DATA.unitSongs.map(function(s, i) {
-        return '<div class="unit-card"><div class="unit-card-num">' + (i + 1) + '</div><div class="unit-card-setlist">' + escapeHtml(s.setlist || '') + '</div><div class="unit-card-name">' + escapeHtml(s.name || '') + '</div><div class="unit-card-original">' + escapeHtml(s.original || '') + '</div></div>';
-    }).join('');
-    el.innerHTML = cards + cards; el.style.animation = '';
-}
-
-// RESCHEDULE
-function renderReschedule() {
-    var summaryEl = document.getElementById('catSummary'), sectionsEl = document.getElementById('historySections');
-    var hist = SCHEDULE_DATA.history, cats = Object.keys(hist);
-    if (!cats.length) { summaryEl.innerHTML = '<div class="empty-state" style="grid-column:1/-1;">Belum ada riwayat show tercatat.</div>'; sectionsEl.innerHTML = ''; return; }
-    
-    summaryEl.innerHTML = cats.map(function(c) {
-        var count = 0; hist[c].shows.forEach(function(s) { count += s.count; });
-        return '<div class="cat-summary-card cat-theater-s"><div class="cat-summary-icon">🎭</div><div class="cat-summary-count" data-target="' + count + '">0</div><div class="cat-summary-label">' + escapeHtml(c) + '</div></div>';
-    }).join('');
-
-    sectionsEl.innerHTML = cats.map(function(c) {
-        return '<div class="history-section rv"><div class="history-section-header"><div class="history-section-dot" style="background:var(--gold)"></div><div class="history-section-title" style="color:var(--gold-light)">' + escapeHtml(c) + '</div></div><div class="show-accordion">' + 
-        hist[c].shows.map(function(show) {
-            return '<div class="show-accordion-item"><div class="show-accordion-header" onclick="toggleShowAcc(this)"><div class="show-acc-icon icon-theater">🎭</div><div class="show-acc-info"><div class="show-acc-name">' + escapeHtml(show.name || '') + '</div><div class="show-acc-meta"><span>' + show.count + 'x tampil</span></div></div><div class="show-acc-arrow">▼</div></div><div class="show-accordion-body"><div class="show-accordion-inner">' + 
-            (show.dates || []).map(function(d) {
-                return '<div class="show-detail-card"><div class="show-detail-date"><div class="d">' + escapeHtml(d.day || '') + '</div><div class="m">' + escapeHtml(d.mon || '') + '</div></div><div class="show-detail-info"><div class="show-detail-time">' + escapeHtml(d.time || '') + '</div></div></div>';
-            }).join('') + 
-            '</div></div></div>';
-        }).join('') + '</div></div>';
-    }).join('');
-}
-
-function toggleShowAcc(btn) {
-    var item = btn.closest('.show-accordion-item');
-    document.querySelectorAll('.show-accordion-item.open').forEach(function(ai) { if (ai !== item) ai.classList.remove('open'); });
-    item.classList.toggle('open');
-}
-
-// HERO PEEK
-function renderHeroPeek() {
-    var peek = document.getElementById('heroPeek');
-    if (!SCHEDULE_DATA.upcoming.length) { peek.innerHTML = '<span class="hero-peek-label">Next</span><span class="hero-peek-info">Belum ada jadwal</span>'; return; }
-    var n = SCHEDULE_DATA.upcoming[0];
-    peek.innerHTML = '<span class="hero-peek-label">Next</span><span class="hero-peek-info"><b>' + escapeHtml(n.title || '') + '</b> — ' + escapeHtml(n.day || '') + ' ' + escapeHtml(n.month || '') + '</span><span class="hero-peek-arrow" onclick="switchView(\'view-schedule\')">→</span>';
-}
-
-/* ========================================================
-   GALLERY
-   ======================================================== */
-var galRalyneSubTab = null, galRalvandraSubTab = null, lbImages = [], lbIndex = 0;
-
-function renderGalRalyne() { renderGalleryView('galRalyneContent', GALLERY_RALYNE, galRalyneSubTab, openGalRalyneSubTab, false); }
-function renderGalRalvandra() { renderGalleryView('galRalvandraContent', GALLERY_RALVANDRA, galRalvandraSubTab, openGalRalvandraSubTab, true); }
-
-function renderGalleryView(containerId, galleryData, subTab, setSubTabFn, isPurple) {
-    var el = document.getElementById(containerId); if (!el) return;
-    if (subTab !== null) {
-        var folder = galleryData.find(function(f) { return f.key === subTab; });
-        if (folder) { renderGalSubTab(el, folder, isPurple, setSubTabFn); return; }
-        else { setSubTabFn(null); return; }
-    }
-    if (!galleryData.length) { el.innerHTML = '<div class="empty-state">Belum ada album galeri.</div>'; return; }
-    var html = '<div class="gal-folders-grid">';
-    galleryData.forEach(function(folder) {
-        var cover = folder.images && folder.images.length > 0 ? folder.images[0].src : '';
-        var count = folder.images ? folder.images.length : 0;
-        var pClass = isPurple ? ' purple-theme' : '';
-        var pDot = isPurple ? ' purple' : '';
-        var pCount = isPurple ? ' purple' : '';
-        html += '<div class="gal-folder-card' + pClass + '" onclick="' + setSubTabFn.name + '(\'' + folder.key + '\')">';
-        html += '<div class="gal-folder-cover">' + (cover ? '<img src="' + cover + '" alt="' + escapeHtml(folder.label) + '" loading="lazy">' : '') + '<div class="gal-folder-cover-overlay"></div>' + (count > 0 ? '<div class="gal-folder-badge"><span class="gal-folder-badge-dot' + pDot + '"></span>' + count + ' foto</div>' : '') + '</div>';
-        html += '<div class="gal-folder-info"><div class="gal-folder-icon' + pDot + '"><svg viewBox="0 0 24 24"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg></div><div class="gal-folder-text"><div class="gal-folder-name">' + escapeHtml(folder.label) + '</div><div class="gal-folder-count' + pCount + '"><span>' + count + '</span> foto</div></div><svg class="gal-folder-arrow" viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg></div></div>';
-    });
-    html += '</div>'; el.innerHTML = html;
-    setTimeout(function() { el.querySelectorAll('.gal-folder-card').forEach(function(c, i) { setTimeout(function() { c.classList.add('visible'); }, i * 100); }); }, 50);
-}
-
-function renderGalSubTab(el, folder, isPurple, setSubTabFn) {
-    var imgs = folder.images ? folder.images.slice().reverse() : [];
-    var pClass = isPurple ? ' purple-theme' : '';
-    var galleryType = isPurple ? 'ralvandra' : 'ralyne';
-    var html = '<div class="gal-photos-header"><button class="back-btn" onclick="closeGalSubTab(\'' + galleryType + '\')" aria-label="Kembali"><svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg></button><h3>' + escapeHtml(folder.label) + '</h3><span class="gal-photos-count">' + imgs.length + ' foto</span></div>';
-    if (!imgs.length) { html += '<div class="gal-masonry"><div class="gal-empty">Belum ada foto di album ini.</div></div>'; }
-    else {
-        html += '<div class="gal-masonry">';
-        imgs.forEach(function(img, i) {
-            html += '<div class="gal-item' + pClass + '" onclick="openLightbox(' + i + ')"><div class="gal-item-img-wrap"><img src="' + img.src + '" alt="' + escapeHtml(img.alt) + '" loading="lazy"></div><div class="gal-item-overlay"><div class="gal-item-zoom"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/><line x1="11" y1="8" x2="11" y2="14"/><line x1="8" y1="11" x2="14" y2="11"/></svg></div></div></div>';
-        }); html += '</div>';
-    }
-    el.innerHTML = html; lbImages = imgs;
-    setTimeout(function() { el.querySelectorAll('.gal-item').forEach(function(it, i) { setTimeout(function() { it.classList.add('visible'); }, i * 60); }); }, 50);
-}
-
-function openGalRalyneSubTab(key) { galRalyneSubTab = key; renderGalRalyne(); window.scrollTo({top:0,behavior:'smooth'}); }
-function openGalRalvandraSubTab(key) { galRalvandraSubTab = key; renderGalRalvandra(); window.scrollTo({top:0,behavior:'smooth'}); }
-function closeGalSubTab(gallery) {
-    if (gallery === 'ralyne') { galRalyneSubTab = null; renderGalRalyne(); }
-    else { galRalvandraSubTab = null; renderGalRalvandra(); }
-}
-
-/* ========================================================
-   LIGHTBOX
-   ======================================================== */
-function openLightbox(idx) { lbIndex = idx; updateLightbox(); document.getElementById('lightbox').classList.add('active'); document.body.style.overflow = 'hidden'; }
-function closeLightbox() { document.getElementById('lightbox').classList.remove('active'); document.body.style.overflow = ''; }
-function lightboxNav(dir) { lbIndex += dir; if (lbIndex < 0) lbIndex = lbImages.length - 1; if (lbIndex >= lbImages.length) lbIndex = 0; updateLightbox(); }
-function updateLightbox() {
-    var img = document.getElementById('lightboxImg'); img.style.opacity = '0';
-    setTimeout(function() { img.src = lbImages[lbIndex].src; img.alt = lbImages[lbIndex].alt; img.style.opacity = '1'; }, 150);
-    document.getElementById('lbCounter').textContent = (lbIndex + 1) + ' / ' + lbImages.length;
-    document.getElementById('lbPrev').classList.toggle('disabled', lbImages.length <= 1);
-    document.getElementById('lbNext').classList.toggle('disabled', lbImages.length <= 1);
-}
-document.addEventListener('keydown', function(e) { var lb = document.getElementById('lightbox'); if (!lb.classList.contains('active')) return; if (e.key === 'Escape') closeLightbox(); if (e.key === 'ArrowLeft') lightboxNav(-1); if (e.key === 'ArrowRight') lightboxNav(1); });
-
-
-/* ========================================================
-   FANBASE & REGISTRATION
-   ======================================================== */
-function renderFanbasePage() {
-    var D = FANBASE_DATA;
-    document.getElementById('fbDescText').textContent = D.description;
-    document.getElementById('fbMemberCount').textContent = D.members.length > 0 ? D.members.length : '—';
-    
-    var fd = new Date(D.foundedDate);
-    var months = ['Jan','Feb','Mar','Apr','Mei','Jun','Jul','Agu','Sep','Okt','Nov','Des'];
-    document.getElementById('fbFoundedShort').textContent = fd.getDate() + ' ' + months[fd.getMonth()] + ' ' + fd.getFullYear();
-
-    var faqEl = document.getElementById('fbFaqList');
-    if (!D.faq.length) {
-        faqEl.innerHTML = '<div class="empty-state" style="padding:32px 20px"><div style="font-size:1.8rem;margin-bottom:10px;opacity:.4">💬</div><div>Belum ada FAQ yang tersedia saat ini.</div></div>';
-    } else {
-        faqEl.innerHTML = D.faq.map(function(item) {
-            return '<div class="fb-faq-item"><button class="fb-faq-question" onclick="toggleFaq(this)">' + escapeHtml(item.q) + '<svg class="fb-faq-arrow" viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg></button><div class="fb-faq-answer"><p>' + escapeHtml(item.a) + '</p></div></div>';
-        }).join('');
-    }
-
-    var regStatusEl = document.getElementById('fbRegStatus'), regBtnEl = document.getElementById('fbRegBtn'), regNoteEl = document.getElementById('fbRegNote');
-    if (D.registrationOpen) {
-        regStatusEl.className = 'fb-reg-status open'; regStatusEl.innerHTML = '<span class="fb-reg-dot"></span>Open';
-        regBtnEl.className = 'fb-reg-btn open'; regBtnEl.disabled = false;
-        if (D.registrationLink) { regBtnEl.onclick = function() { window.open(D.registrationLink, '_blank'); }; regNoteEl.textContent = 'Klik tombol untuk mengisi form pendaftaran.'; }
-        else { regBtnEl.onclick = openRegModal; regNoteEl.textContent = 'Data akan diverifikasi oleh admin fanbase.'; }
-        regBtnEl.innerHTML = '<svg viewBox="0 0 24 24" style="width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:2"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><polyline points="10 17 15 12 10 7"/><line x1="15" y1="12" x2="3" y2="12"/></svg>Daftar Sekarang';
-    } else {
-        regStatusEl.className = 'fb-reg-status closed'; regStatusEl.innerHTML = '<span class="fb-reg-dot"></span>Belum Dibuka';
-        regBtnEl.className = 'fb-reg-btn closed'; regBtnEl.disabled = true; regBtnEl.onclick = null;
-        regBtnEl.innerHTML = 'Belum Dibuka'; regNoteEl.textContent = 'Pendaftaran akan dibuka melalui web admin.';
-    }
-}
-
-function toggleFaq(btn) { var item = btn.closest('.fb-faq-item'); document.querySelectorAll('.fb-faq-item.active').forEach(function(ai) { if (ai !== item) ai.classList.remove('active'); }); item.classList.toggle('active'); }
-
-async function submitRegistration() {
-    var n = document.getElementById('regName').value.trim(), s = document.getElementById('regSocial').value.trim(), r = document.getElementById('regReason').value.trim();
-    if (!n || !s) { showToast('⚠️ Nama dan akun sosmed harus diisi!'); return; }
-    try {
-        await fetch(API_URL, { method: 'POST', headers: {'Content-Type':'text/plain;charset=utf-8'}, body: JSON.stringify({action:'addMember', nama:n, social:s, alasan:r}), redirect:'follow' });
-        FANBASE_DATA.members.push({name:n, social:s, date: new Date().toISOString().split('T')[0]});
-        document.getElementById('regName').value = ''; document.getElementById('regSocial').value = ''; document.getElementById('regReason').value = '';
-        closeRegModal(); showToast('✅ Pendaftaran berhasil!'); renderFanbasePage();
-    } catch(e) { showToast('⚠️ Gagal mendaftar. Coba lagi.'); }
-}
-
-
-/* ========================================================
-   BIRTHDAY & LETTERS
-   ======================================================== */
-var cdi;
-function startCountdown() {
-    clearInterval(cdi);
-    var u = function() {
-        var n = new Date(), t = new Date(n.getFullYear(), 9, 15); // October is month 9 (0-indexed)
-        if (n > t) t = new Date(n.getFullYear() + 1, 9, 15);
-        var d = t - n;
-        document.getElementById('bdDays').textContent = String(Math.floor(d / 86400000)).padStart(2, '0');
-        document.getElementById('bdHours').textContent = String(Math.floor((d % 86400000) / 3600000)).padStart(2, '0');
-        document.getElementById('bdMins').textContent = String(Math.floor((d % 3600000) / 60000)).padStart(2, '0');
-        document.getElementById('bdSecs').textContent = String(Math.floor((d % 60000) / 1000)).padStart(2, '0');
-    };
-    u(); cdi = setInterval(u, 1000);
-}
-
-function renderLetters() {
-    var g = document.getElementById('lettersMasonry'), b = document.getElementById('letterCountBadge');
-    b.textContent = LETTER_DATA.length;
-    if (!LETTER_DATA.length) { g.innerHTML = '<div class="letters-empty"><div class="letters-empty-icon">✉️</div><div class="letters-empty-text"><span>Belum ada surat.</span><span class="letters-empty-highlight">Jadilah yang pertama! 🍃</span></div></div>'; return; }
-    var ini = function(n) { return n.charAt(0).toUpperCase(); };
-    var rots = [-1.8,1.2,-0.6,1.6,-1.3,0.9,-0.8,1.4,0.4,-1.1];
-    var pinRots = [-3,2,-1.5,3,-2,1,-2.5,2.5,0.5,-1];
-    g.innerHTML = LETTER_DATA.map(function(l, i) {
-        var t = String(l.time).substring(11, 16);
-        var soc = l.social ? '<span class="letter-social">' + (l.social.startsWith('@') ? l.social : '@' + l.social) + '</span>' : '';
-        return '<div class="letter-card" style="--note-rot:' + rots[i%rots.length] + 'deg;--pin-rot:' + pinRots[i%pinRots.length] + 'deg;animation-delay:' + (i*0.06) + 's"><div class="letter-card-accent"></div><div class="letter-card-header"><div class="letter-avatar">' + ini(l.name) + '</div><div class="letter-meta"><div class="letter-name">' + escapeHtml(l.name) + '</div>' + soc + '</div><div class="letter-card-time">' + t + '</div></div><div class="letter-msg">' + escapeHtml(l.message) + '</div></div>';
-    }).join('');
-}
-
-async function submitLetter() {
-    var n = document.getElementById('fName').value.trim(), s = document.getElementById('fSocial').value.trim(), m = document.getElementById('fMsg').value.trim();
-    if (!n || !m) { showToast('⚠️ Nama dan pesan harus diisi!'); return; }
-    try {
-        await fetch(API_URL, { method: 'POST', headers: {'Content-Type':'text/plain;charset=utf-8'}, body: JSON.stringify({action:'addWish', nama:n, social:s, pesan:m, timestamp: new Date().toISOString()}), redirect:'follow' });
-        LETTER_DATA.unshift({name:n, social:s, message:m, time: new Date().toISOString()});
-        document.getElementById('fName').value = ''; document.getElementById('fSocial').value = ''; document.getElementById('fMsg').value = '';
-        document.getElementById('charCount').textContent = '0';
-        closeLetterForm(); showToast('✅ Surat terkirim!'); renderLetters();
-    } catch(e) { showToast('⚠️ Gagal mengirim surat. Coba lagi.'); }
-}
-
-
-/* ========================================================
-   NAVIGATION & UI CONTROLS
-   ======================================================== */
-var navEl = document.getElementById('nav');
-
-function toggleDropdown(e, id) { e.stopPropagation(); var dd = document.getElementById(id); var isOpen = dd.classList.contains('open'); document.querySelectorAll('.nav-dropdown.open').forEach(function(d) { d.classList.remove('open'); }); if (!isOpen) dd.classList.add('open'); }
-function toggleMobDropdown(id) { document.getElementById(id).classList.toggle('open'); }
-document.addEventListener('click', function() { document.querySelectorAll('.nav-dropdown.open').forEach(function(d) { d.classList.remove('open'); }); });
-
-var _currentView = 'view-home';
-
-function switchView(viewId) {
-    document.querySelectorAll('.view').forEach(function(v) { v.classList.remove('active'); });
-    var t = document.getElementById(viewId);
-    if (t) { t.classList.add('active'); t.querySelectorAll('.rv').forEach(function(el) { el.classList.remove('show'); void el.offsetWidth; rvObs.observe(el); }); if (viewId === 'view-archive') setTimeout(animateStatBars, 600); }
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-    
-    if (viewId === 'view-home') navEl.classList.add('nav-dark'); else navEl.classList.remove('nav-dark');
-    document.querySelectorAll('.nav-link').forEach(function(l) { l.classList.remove('active'); });
-    var mnl = document.querySelector('.nav-link[data-view="'+viewId+'"]'); if (mnl) mnl.classList.add('active');
-    document.querySelectorAll('.nav-dropdown-item').forEach(function(i) { i.classList.toggle('active', i.getAttribute('data-view') === viewId); });
-    document.querySelectorAll('.mob-menu-link').forEach(function(l) { l.classList.remove('active'); });
-    var mml = document.querySelector('.mob-menu-link[data-view="'+viewId+'"]'); if (mml) mml.classList.add('active');
-    document.querySelectorAll('.nav-dropdown.open').forEach(function(d) { d.classList.remove('open'); });
-    closeMob();
-
-    if (viewId === 'view-reschedule') triggerResCount();
-    if (viewId === 'view-gallery-ralyne') { galRalyneSubTab = null; renderGalRalyne(); }
-    if (viewId === 'view-gallery-ralvandra') { galRalvandraSubTab = null; renderGalRalvandra(); }
-    if (viewId === 'view-hashtags') renderHashtagsFull();
-    if (viewId === 'view-funfacts') renderFunFactsFull();
-    if (viewId === 'view-videos') renderVideoFull();
-    if (viewId === 'view-fanbase') renderFanbasePage();
-    _currentView = viewId;
-}
-
-// Overlays
-function openBirthday() { document.getElementById('bdayOverlay').classList.add('open'); document.body.style.overflow = 'hidden'; startCountdown(); renderLetters(); }
-function closeBirthday() { document.getElementById('bdayOverlay').classList.remove('open'); document.body.style.overflow = ''; }
-function openLetterForm() { document.getElementById('formModal').classList.add('open'); }
-function closeLetterForm() { document.getElementById('formModal').classList.remove('open'); }
-function openRegModal() { document.getElementById('regModal').classList.add('open'); }
-function closeRegModal() { document.getElementById('regModal').classList.remove('open'); }
-
-// Mobile Menu
-var burger = document.getElementById('burger'), mobMenu = document.getElementById('mobMenu'), mobOverlay = document.getElementById('mobOverlay'), mobOpen = false;
-function toggleMob() { mobOpen = !mobOpen; burger.classList.toggle('open', mobOpen); mobMenu.classList.toggle('open', mobOpen); mobOverlay.classList.toggle('open', mobOpen); document.body.style.overflow = mobOpen ? 'hidden' : ''; }
-function closeMob() { if (!mobOpen) return; mobOpen = false; burger.classList.remove('open'); mobMenu.classList.remove('open'); mobOverlay.classList.remove('open'); document.body.style.overflow = ''; }
-burger.addEventListener('click', toggleMob); mobOverlay.addEventListener('click', closeMob);
-
-// Event Listeners for Navigation
-document.getElementById('navBrand').addEventListener('click', function() { switchView('view-home'); });
-document.querySelectorAll('.nav-link, .nav-dropdown-item, .mob-menu-link, .mob-dropdown-item').forEach(function(l) {
-    l.addEventListener('click', function(e) { e.preventDefault(); switchView(this.getAttribute('data-view')); });
-});
-
-// Hero Slideshow & Jiko
-var slides = document.querySelectorAll('.hero-slide'), dots = document.querySelectorAll('.slide-dot'), cur = 0;
-setInterval(function() { slides[cur].classList.remove('active-slide'); dots[cur].classList.remove('active-dot'); cur = (cur + 1) % slides.length; slides[cur].classList.add('active-slide'); dots[cur].classList.add('active-dot'); }, 10000);
-
-var jikoStr = "Ready Set Go! Game Play Aku Akan Menghibur Mu. Halo Semuanya Aku Ralyne", jikoEl = document.getElementById('jikoText'), jikoI = 0;
-function typeJiko() { if (jikoI < jikoStr.length) { jikoEl.textContent += jikoStr.charAt(jikoI); jikoI++; setTimeout(typeJiko, 35); } }
-setTimeout(typeJiko, 2200);
-
-// Scroll Events
-window.addEventListener('scroll', function() { navEl.classList.toggle('scrolled', window.scrollY > 50); document.getElementById('btt').classList.toggle('show', window.scrollY > 400); });
-
-// Back to Top
-document.getElementById('btt').addEventListener('click', function() { window.scrollTo({ top: 0, behavior: 'smooth' }); });
-
-// Reveal Observer
-var rvObs = new IntersectionObserver(function(e) { e.forEach(function(x) { if (x.isIntersecting) x.target.classList.add('show'); }); }, { threshold: 0.08, rootMargin: '0px 0px -40px 0px' });
-document.querySelectorAll('.rv').forEach(function(el) { rvObs.observe(el); });
-
-// Counter Animation
-function animCount(id, t, d) { d = d || 2000; var el = document.getElementById(id); if (!el) return; var s = performance.now(); function tick(n) { var p = Math.min((n - s) / d, 1); el.textContent = Math.floor(t * (1 - Math.pow(1 - p, 3))); if (p < 1) requestAnimationFrame(tick); } requestAnimationFrame(tick); }
-var fanSt = false; var fObs = new IntersectionObserver(function(e) { e.forEach(function(x) { if (x.isIntersecting && !fanSt) { fanSt = true; animCount('songC', SCHEDULE_DATA.unitSongs.length || 2); var totalShows = 0; Object.keys(SCHEDULE_DATA.history).forEach(function(c) { SCHEDULE_DATA.history[c].shows.forEach(function(s) { totalShows += s.count; }); }); animCount('showC', totalShows || 12); } }); }, { threshold: 0.3 });
-var heroEl = document.getElementById('hero'); if (heroEl) fObs.observe(heroEl);
-
-var resSt = false;
-function triggerResCount() { if (resSt) return; resSt = true; document.querySelectorAll('.cat-summary-count').forEach(function(el) { var target = parseInt(el.getAttribute('data-target')) || 0; animCount(el, target, 800); }); }
-
-// Pokecard 3D Effect
-(function() { var card = document.getElementById('pokecard'), holo = document.getElementById('pokecardHolo'); if (!card || !holo) return; card.addEventListener('mousemove', function(e) { var r = card.getBoundingClientRect(), x = e.clientX - r.left, y = e.clientY - r.top; card.style.transform = 'rotateX(' + ((y - r.height/2) / (r.height/2) * -12) + 'deg) rotateY(' + ((x - r.width/2) / (r.width/2) * 12) + 'deg)'; holo.style.setProperty('--holo-angle', Math.atan2(y - r.height/2, x - r.width/2) * (180/Math.PI) + 'deg'); }); card.addEventListener('mouseleave', function() { card.style.transform = ''; card.style.transition = 'transform 0.5s ease-out'; setTimeout(function() { card.style.transition = 'transform 0.15s ease-out'; }, 500); }); card.addEventListener('mouseenter', function() { card.style.transition = 'transform 0.15s ease-out'; }); })();
-
-function animateStatBars() { document.querySelectorAll('.pokecard-stat-bar').forEach(function(b) { b.style.width = '0'; setTimeout(function() { b.style.width = b.getAttribute('data-width') + '%'; }, 100); }); }
-
-// Form Helpers
-function updateCharCount() { var m = document.getElementById('fMsg'), c = document.getElementById('charCount'); c.textContent = m.value.length; c.style.color = m.value.length >= 280 ? '#eab308' : 'rgba(255,255,255,.2)'; }
-function updateRegCharCount() { var m = document.getElementById('regReason'), c = document.getElementById('regCharCount'); c.textContent = m.value.length; }
-
-// Toast
-var toastEl = document.getElementById('toast');
-function showToast(m) { toastEl.innerHTML = m; toastEl.classList.add('show'); setTimeout(function() { toastEl.classList.remove('show'); }, 3500); }
-
-// Modal Backdrop Closes
-document.getElementById('formModal').addEventListener('click', function(e) { if (e.target === this) closeLetterForm(); });
-document.getElementById('regModal').addEventListener('click', function(e) { if (e.target === this) closeRegModal(); });
-
-</script>
+    <div class="lightbox" id="lightbox">
+        <div class="lightbox-backdrop" onclick="closeLightbox()"></div>
+        <div class="lightbox-content"><button class="lightbox-close" onclick="closeLightbox()"
+                aria-label="Tutup">&times;</button><button class="lb-nav lb-prev disabled" id="lbPrev"
+                onclick="event.stopPropagation();lightboxNav(-1)"><svg viewBox="0 0 24 24">
+                    <polyline points="15 18 9 12 15 6" />
+                </svg></button><img src="" alt="Preview" id="lightboxImg" onclick="event.stopPropagation()"><button
+                class="lb-nav lb-next" id="lbNext" onclick="event.stopPropagation();lightboxNav(1)"><svg
+                    viewBox="0 0 24 24">
+                    <polyline points="9 18 15 12 9 6" />
+                </svg></button>
+            <div class="lb-counter" id="lbCounter"></div>
+        </div>
+    </div>
+
+    <div class="toast" id="toast"></div>
+    <button class="btt" id="btt" aria-label="Ke atas">↑</button>
+
+    <script src="script.js"></script>
 </body>
+
 </html>
